@@ -1,12 +1,16 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Account from "./pages/Account";
 import { useContext, useEffect, useMemo } from "react";
 import AuthContext from "./context/AuthProvider";
 import Layout from "./pages/Layout";
 import { ThemeProvider } from "styled-components";
 import GlobalStyles from "./components/styles/Global";
 import Home from "./pages/Home";
+import EditProfile from "./pages/EditProfile";
+import ChangePassword from "./pages/ChangePassword";
+import DeleteAccount from "./pages/DeleteAccount";
 
 const theme = {
   colors: {
@@ -38,6 +42,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path="account" element={<Account />}>
+              <Route index element={<EditProfile />} />
+              <Route path="password" element={<ChangePassword />} />
+              <Route path="delete" element={<DeleteAccount />} />
+            </Route>
           </Route>
 
         </Routes>

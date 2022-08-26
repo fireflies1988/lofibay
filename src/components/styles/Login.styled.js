@@ -23,12 +23,6 @@ export const LoginContainer = styled.div`
       margin-bottom: 2rem;
     }
 
-    .error-text {
-      text-align: right;
-      font-size: small;
-      font-weight: bold;
-    }
-
     a {
       text-align: left;
       color: rgb(75, 75, 75);

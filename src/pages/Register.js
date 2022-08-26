@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 import { LoginContainer } from "../components/styles/Login.styled";
+import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 
 const initialErrors = {
   emailErrorText: "",
@@ -170,9 +171,7 @@ function Register() {
           onChange={handleChange}
           size="small"
         />
-        <FormHelperText error className="error-text">
-          {errors.emailErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{errors.emailErrorText}</StyledFormHelperErrorText>
 
         <TextField
           style={{ width: "100%", marginTop: "1rem" }}
@@ -184,9 +183,7 @@ function Register() {
           onChange={handleChange}
           size="small"
         />
-        <FormHelperText error className="error-text">
-          {errors.usernameErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{errors.usernameErrorText}</StyledFormHelperErrorText>
 
         <FormControl
           sx={{ width: "25ch" }}
@@ -200,7 +197,7 @@ function Register() {
           <OutlinedInput
             helperText={errors.passwordErrorText}
             id="outlined-adornment-password"
-            type={errors.showPassword ? "text" : "password"}
+            type={state.showPassword ? "text" : "password"}
             name="password"
             value={errors.password}
             onChange={handleChange}
@@ -213,16 +210,14 @@ function Register() {
                   onMouseDown={handleMouseDownPassword}
                   edge="end"
                 >
-                  {errors.showPassword ? <VisibilityOff /> : <Visibility />}
+                  {state.showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             }
             label="Password"
           />
         </FormControl>
-        <FormHelperText error className="error-text">
-          {errors.passwordErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{errors.passwordErrorText}</StyledFormHelperErrorText>
 
         <FormControl
           sx={{ width: "25ch" }}
@@ -236,7 +231,7 @@ function Register() {
           <OutlinedInput
             helperText={errors.passwordErrorText}
             id="outlined-adornment-password"
-            type={errors.showPassword ? "text" : "password"}
+            type={state.showPassword ? "text" : "password"}
             name="confirmPassword"
             value={errors.confirmPassword}
             onChange={handleChange}
@@ -248,16 +243,14 @@ function Register() {
                   onMouseDown={handleMouseDownPassword}
                   edge="end"
                 >
-                  {errors.showPassword ? <VisibilityOff /> : <Visibility />}
+                  {state.showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             }
             label="ConfirmPassword"
           />
         </FormControl>
-        <FormHelperText error className="error-text">
-          {errors.confirmPasswordErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{errors.confirmPasswordErrorText}</StyledFormHelperErrorText>
 
         <TextField
           style={{ width: "100%", marginTop: "1rem" }}
@@ -269,9 +262,7 @@ function Register() {
           onChange={handleChange}
           size="small"
         />
-        <FormHelperText error className="error-text">
-          {errors.firstNameErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{errors.firstNameErrorText}</StyledFormHelperErrorText>
 
         <TextField
           style={{ width: "100%", marginTop: "1rem" }}
@@ -283,9 +274,7 @@ function Register() {
           onChange={handleChange}
           size="small"
         />
-        <FormHelperText error className="error-text">
-          {errors.lastNameErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{errors.lastNameErrorText}</StyledFormHelperErrorText>
 
         <LoadingButton
           loading={errors.isLoading}

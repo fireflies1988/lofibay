@@ -17,6 +17,7 @@ import AuthContext from "../context/AuthProvider";
 import { createBrowserHistory } from "history";
 import axios from "axios";
 import { LoginContainer } from "../components/styles/Login.styled";
+import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 
 function Login() {
   const history = createBrowserHistory();
@@ -166,9 +167,7 @@ function Login() {
           value={credentials.email}
           onChange={handleChange}
         />
-        <FormHelperText error className="error-text">
-          {state.emailErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{state.emailErrorText}</StyledFormHelperErrorText>
 
         <FormControl
           sx={{ width: "25ch" }}
@@ -200,9 +199,7 @@ function Login() {
             label="Password"
           />
         </FormControl>
-        <FormHelperText error className="error-text">
-          {state.passwordErrorText}
-        </FormHelperText>
+        <StyledFormHelperErrorText>{state.passwordErrorText}</StyledFormHelperErrorText>
 
         <div className="forgot-password">
           <Link to="/">Forgot password?</Link>
