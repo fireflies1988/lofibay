@@ -1,23 +1,27 @@
-import { useContext, useState } from "react";
-import {
-  TextField,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  InputAdornment,
-  IconButton,
-  FormHelperText,
-  Alert,
-} from "@mui/material";
+import LoginIcon from "@mui/icons-material/Login";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { Link, useLocation } from "react-router-dom";
-import AuthContext from "../context/AuthProvider";
+import {
+  Alert,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+} from "@mui/material";
 import { createBrowserHistory } from "history";
-import axios from "axios";
-import { LoginContainer } from "../components/styles/Login.styled";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
+import { LoginContainer } from "../components/styles/Login.styled";
+import AuthContext from "../context/AuthProvider";
+import {
+  GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
+  POST_LOGIN_ENDPOINT_PATH,
+  SERVER_URL,
+} from "../utils/Api";
 
 function Login() {
   const history = createBrowserHistory();
@@ -29,12 +33,21 @@ function Login() {
   });
   const [state, setState] = useState({
     showPassword: false,
+    isLoading: false,
+  });
+  const initialMessages = {
     emailErrorText: "",
     passwordErrorText: "",
     errorMessage: "",
     successMessage: location.state?.message,
-    isLoading: false,
-  });
+  };
+  const [messages, setMessages] = useState(initialMessages);
+
+  useEffect(() => {
+    if (location.state) {
+      history.replace(location.state, null);
+    }
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -49,112 +62,117 @@ function Login() {
     event.preventDefault();
   };
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    setState((state) => ({
-      ...state,
-      emailErrorText: "",
-      passwordErrorText: "",
-      errorMessage: "",
-      successMessage: "",
-    }));
+    setMessages(initialMessages);
 
     let errors = 0;
     if (!credentials.email) {
-      setState((state) => ({
-        ...state,
+      setMessages((messages) => ({
+        ...messages,
         emailErrorText: "Invalid email!",
       }));
       errors++;
     }
 
     if (!credentials.password) {
-      setState((state) => ({
-        ...state,
+      setMessages((messages) => ({
+        ...messages,
         passwordErrorText: "Password required!",
       }));
       errors++;
     }
 
     if (errors === 0) {
-      login(credentials.email, credentials.password);
+      await loginAsync(credentials.email, credentials.password);
     }
   }
 
-  async function login(email, password) {
-    setState((state) => ({
-      ...state,
-      isLoading: true,
-    }));
+  async function loginAsync(email, password) {
     try {
-      const response = await axios.post(
-        "https://salty-earth-78071.herokuapp.com/user/login",
+      const loginResponse = await fetch(
+        `${SERVER_URL}${POST_LOGIN_ENDPOINT_PATH}`,
         {
-          email,
-          password,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
-          // withCredentials: true
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+          redirect: "follow",
         }
       );
-      if (response.data.accessToken != null) {
-        const accessToken = response.data.accessToken;
-        const tokenType = response.data.tokenType;
+      const loginResponseData = await loginResponse.json();
 
-        // get role
+      if (loginResponse.status === 200) {
+        let authData = {
+          accessToken: loginResponseData?.data?.accessToken,
+          refreshToken: loginResponseData?.data?.refreshToken,
+        };
+
+        // fetch user info
         try {
-          const response = await axios.get(
-            "https://salty-earth-78071.herokuapp.com/user/get",
+          const userInfoResponse = await fetch(
+            `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
             {
+              method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: tokenType + " " + accessToken,
+                Authorization: `bearer ${authData.accessToken}`,
               },
+              redirect: "follow",
             }
           );
-          var isAdmin = response.data?.roleid?.name === "Admin" ? true : false;
+          const userInfoResponseData = await userInfoResponse.json();
+
+          if (userInfoResponse.status === 200) {
+            authData = {
+              ...authData,
+              userId: userInfoResponseData?.data?.userId,
+              avatarUrl: userInfoResponseData?.data?.avatarUrl,
+              role: userInfoResponseData?.data?.role?.roleName,
+            };
+          }
         } catch (err) {
-          console.log(err);
+          console.log();
         }
 
-        let temp = {
-          accessToken: accessToken,
-          tokenType: tokenType,
-          loggedIn: true,
-          isAdmin: isAdmin ?? false,
-        };
-        console.log(temp);
-        localStorage.setItem("auth", JSON.stringify(temp));
-        setAuth(temp);
+        // save auth to local storage
+        localStorage.setItem("auth", JSON.stringify(authData));
+        setAuth(authData);
+      } else if (loginResponse?.status === 401) {
+        setMessages((messages) => ({
+          ...messages,
+          errorMessage: loginResponseData?.message,
+        }));
       } else {
-        setState((state) => ({
-          ...state,
-          errorMessage: "Incorrect email or password!",
+        setMessages((messages) => ({
+          ...messages,
+          errorMessage: "Unknown error.",
         }));
       }
     } catch (err) {
-      setState((state) => ({ ...state, errorMessage: err }));
+      setMessages((messages) => ({ ...messages, errorMessage: err }));
     }
-    setState((state) => ({
-      ...state,
-      isLoading: false,
-    }));
   }
 
   return (
     <LoginContainer>
       <form onSubmit={handleSubmit}>
-        <Link to="/"><h1 className="title">Lofibay</h1></Link>
+        <Link to="/">
+          <h1 className="title">Lofibay</h1>
+        </Link>
 
-        {state.errorMessage !== "" && (
+        {messages.errorMessage !== "" && (
           <Alert variant="standard" severity="error">
-            {state.errorMessage}
+            {messages.errorMessage}
           </Alert>
         )}
-        {state.successMessage && (
+        {messages.successMessage && (
           <Alert variant="standard" severity="success">
-            {state.successMessage}
+            {messages.successMessage}
           </Alert>
         )}
 
@@ -167,7 +185,9 @@ function Login() {
           value={credentials.email}
           onChange={handleChange}
         />
-        <StyledFormHelperErrorText>{state.emailErrorText}</StyledFormHelperErrorText>
+        <StyledFormHelperErrorText>
+          {messages.emailErrorText}
+        </StyledFormHelperErrorText>
 
         <FormControl
           sx={{ width: "25ch" }}
@@ -178,7 +198,6 @@ function Login() {
             Password
           </InputLabel>
           <OutlinedInput
-            helperText={state.passwordErrorText}
             id="outlined-adornment-password"
             type={state.showPassword ? "text" : "password"}
             name="password"
@@ -199,7 +218,9 @@ function Login() {
             label="Password"
           />
         </FormControl>
-        <StyledFormHelperErrorText>{state.passwordErrorText}</StyledFormHelperErrorText>
+        <StyledFormHelperErrorText>
+          {messages.passwordErrorText}
+        </StyledFormHelperErrorText>
 
         <div className="forgot-password">
           <Link to="/">Forgot password?</Link>
@@ -208,6 +229,7 @@ function Login() {
         <LoadingButton
           loading={state.isLoading}
           loadingPosition="start"
+          startIcon={<LoginIcon />}
           variant="contained"
           style={{ width: "100%", marginTop: "2.5rem" }}
           color="success"

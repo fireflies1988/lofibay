@@ -1,13 +1,15 @@
 import { Button, Grid, IconButton } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { Nav } from "./styles/Nav.styled";
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import AccountMenu from "./AccountMenu";
+import AuthContext from "../context/AuthProvider";
 
 function Navbar() {
-  const isLoggedIn = true;
+  const { auth } = useContext(AuthContext);
+  const isLoggedIn = auth?.accessToken !== null;
 
   return (
     <Nav>

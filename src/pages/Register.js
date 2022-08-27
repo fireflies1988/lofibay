@@ -7,6 +7,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import axios from "axios";
 import { LoginContainer } from "../components/styles/Login.styled";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
+import { POST_SIGNUP_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
 
 const initialErrors = {
   emailErrorText: "",
@@ -34,8 +35,6 @@ function Register() {
   });
   const [errors, setErrors] = useState(initialErrors);
 
-  console.log(errors);
-
   function handleChange(event) {
     const { name, value } = event.target;
     setInputs({ ...inputs, [name]: value });
@@ -49,50 +48,65 @@ function Register() {
     event.preventDefault();
   };
 
-  async function register({ email, password, firstName, lastName }) {
+  async function registerAsync(inputs) {
     setState((state) => ({
       ...state,
       isLoading: true,
     }));
+
     try {
-      const response = await axios.post(
-        "https://salty-earth-78071.herokuapp.com/user/register",
-        {
-          email: email,
-          password: password,
-          firstname: firstName,
-          lastname: lastName,
-          avatar: null,
+      const signUpResponse = await fetch(`${SERVER_URL}${POST_SIGNUP_ENDPOINT_PATH}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
         },
-        {
-          headers: { "Content-Type": "application/json" },
-          // withCredentials: true
-        }
-      );
-      if (response.data.code === 1) {
+        body: JSON.stringify({
+          email: inputs.email,
+          username: inputs.username,
+          password: inputs.password,
+          confirmPassword: inputs.confirmPassword,
+          firstName: inputs.firstName,
+          lastName: inputs.lastName
+        }),
+        redirect: "follow",
+      });
+      const signUpResponseData = await signUpResponse.json();
+
+      if (signUpResponse?.status === 200) {
         navigate("/login", {
           state: {
-            email: email,
-            password: password,
-            message: "Đã đăng ký thành công, đăng nhập ngay"
+            email: inputs.email,
+            password: inputs.password,
+            message: "Your account has been created. Login now."
           }
         });
+      } else if (signUpResponse?.status === 422) {
+        setErrors((errors) => ({
+          ...errors,
+          errorMessage: signUpResponseData?.message,
+        }))
+      } else if (signUpResponse?.status === 400) {
+        setErrors((errors) => ({
+          ...errors,
+          errorMessage: JSON.stringify(signUpResponseData?.errors),
+        }));
       } else {
-        setErrors((state) => ({
-          ...state,
-          errorMessage: response.data.message,
+        setErrors((errors) => ({
+          ...errors,
+          errorMessage: "Unknown error.",
         }));
       }
     } catch (err) {
       setErrors((errors) => ({ ...errors, errorMessage: err }));
     }
+    
     setState((state) => ({
       ...state,
       isLoading: false,
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     setErrors(initialErrors);
 
@@ -146,7 +160,7 @@ function Register() {
     }
 
     if (errors === 0) {
-      register(inputs);
+      await registerAsync(inputs);
     }
   }
 
@@ -195,7 +209,6 @@ function Register() {
             Password
           </InputLabel>
           <OutlinedInput
-            helperText={errors.passwordErrorText}
             id="outlined-adornment-password"
             type={state.showPassword ? "text" : "password"}
             name="password"
@@ -229,7 +242,6 @@ function Register() {
             Confirm password
           </InputLabel>
           <OutlinedInput
-            helperText={errors.passwordErrorText}
             id="outlined-adornment-password"
             type={state.showPassword ? "text" : "password"}
             name="confirmPassword"
@@ -277,7 +289,7 @@ function Register() {
         <StyledFormHelperErrorText>{errors.lastNameErrorText}</StyledFormHelperErrorText>
 
         <LoadingButton
-          loading={errors.isLoading}
+          loading={state.isLoading}
           loadingPosition="start"
           variant="contained"
           style={{ width: "100%", marginTop: "2.5rem" }}

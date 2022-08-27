@@ -2,7 +2,7 @@ import React from 'react'
 
 function DeleteAccount() {
   return (
-    <div>DeleteAccount</div>
+    <h2>Delete account</h2>
   )
 }
 

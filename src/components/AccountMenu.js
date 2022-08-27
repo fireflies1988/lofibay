@@ -11,11 +11,13 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
 
 function AccountMenu() {
   const navigate = useNavigate();
+  const { auth, setAuth } = useContext(AuthContext);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -24,6 +26,17 @@ function AccountMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  function handleLogout() {
+    localStorage.removeItem("auth");
+    setAuth({
+      accessToken: null,
+      refreshToken: null,
+      userId: null,
+      avatarUrl: null,
+      role: null
+    });
+  }
 
   return (
     <React.Fragment>
@@ -37,7 +50,7 @@ function AccountMenu() {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar sx={{ width: 32, height: 32 }} src={auth?.avatarUrl} />
           </IconButton>
         </Tooltip>
       </Box>
@@ -86,7 +99,7 @@ function AccountMenu() {
           Account settings
         </MenuItem>
         <Divider />
-        <MenuItem>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
