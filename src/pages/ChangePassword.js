@@ -11,37 +11,131 @@ import {
   OutlinedInput,
   Paper,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import SaveIcon from "@mui/icons-material/Save";
+import { fetchWithCredentialsAsync } from "../utils/Utils";
+import {
+  PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH,
+  SERVER_URL,
+} from "../utils/Api";
+import AuthContext from "../context/AuthProvider";
 
-const initialErrors = {
-  emailErrorText: "",
-  usernameErrorText: "",
-  passwordErrorText: "",
-  confirmPasswordErrorText: "",
-  firstNameErrorText: "",
-  lastNameErrorText: "",
+const initialMessages = {
+  currentPasswordErrorText: "",
+  newPasswordErrorText: "",
+  confirmNewPasswordErrorText: "",
   errorMessage: "",
+  successMessage: "",
 };
 
 function ChangePassword() {
+  const { auth, setAuth } = useContext(AuthContext); 
   const [inputs, setInputs] = useState({
-    email: "",
-    username: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
   });
   const [state, setState] = useState({
     showPassword: false,
-    isLoading: false,
+    isUpdating: false,
   });
-  const [errors, setErrors] = useState(initialErrors);
+  const [messsages, setMessages] = useState(initialMessages);
 
-  function handleSubmit() {}
-  function handleChange() {}
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setMessages(initialMessages);
+
+    let errors = 0;
+    if (!inputs.currentPassword) {
+      setMessages((messages) => ({
+        ...messages,
+        currentPasswordErrorText: "The current password field is required!",
+      }));
+      errors++;
+    }
+
+    if (!inputs.newPassword) {
+      setMessages((messages) => ({
+        ...messages,
+        newPasswordErrorText: "The new password field is required!",
+      }));
+      errors++;
+    }
+
+    if (!inputs.confirmNewPassword) {
+      setMessages((messages) => ({
+        ...messages,
+        confirmPasswordErrorText: "The confirm new password field is required!",
+      }));
+      errors++;
+    }
+
+    if (inputs.newPassword !== inputs.confirmNewPassword) {
+      setMessages((messages) => ({
+        ...messages,
+        errorMessage: "The new password and confirm new password do not match!",
+      }));
+      errors++;
+    }
+
+    if (errors === 0) {
+      await changePasswordAsync();
+    }
+  }
+
+  async function changePasswordAsync() {
+    setState((state) => ({
+      ...state,
+      isUpdating: true,
+    }));
+
+    try {
+      const requestOptions = {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: inputs.currentPassword,
+          newPassword: inputs.newPassword,
+          confirmNewPassword: inputs.confirmNewPassword,
+        }),
+        redirect: "follow",
+      };
+
+      const changePasswordResponse = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH}`,
+        requestOptions,
+        auth,
+        setAuth
+      );
+      const changePasswordResponseData = await changePasswordResponse.json();
+
+      if (changePasswordResponse.status === 400) {
+        setMessages((messages) => ({ ...messages, errorMessage: JSON.stringify(changePasswordResponseData?.errors) }));
+      } else if (changePasswordResponse.status === 422) {
+        setMessages((messages) => ({ ...messages, errorMessage: changePasswordResponseData?.message }));
+      } else if (changePasswordResponse.status === 200) {
+        setMessages((messages) => ({ ...messages, successMessage: changePasswordResponseData?.message }));
+      } else {
+        setMessages((messages) => ({ ...messages, errorMessage: "Unknown error." }));
+      }
+    } catch (error) {
+      setMessages((messages) => ({ ...messages, errorMessage: error.message }));
+    }
+
+    setState((state) => ({
+      ...state,
+      isUpdating: false,
+    }));
+  }
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    setInputs({ ...inputs, [name]: value });
+  }
+
   function handleCancel() {}
 
   function handleClickShowPassword() {
@@ -56,33 +150,35 @@ function ChangePassword() {
     <>
       <h2>Change password</h2>
       <Paper variant="outlined" sx={{ padding: "0.75rem" }}>
-        {errors.errorMessage !== "" && (
+        {messsages.errorMessage !== "" && (
           <Alert variant="standard" severity="error">
-            {errors.errorMessage}
+            {messsages.errorMessage}
+          </Alert>
+        )}
+
+        {messsages.successMessage !== "" && (
+          <Alert variant="standard" severity="success">
+            {messsages.successMessage}
           </Alert>
         )}
 
         <form onSubmit={handleSubmit}>
-        <FormControl
+          <FormControl
             sx={{ width: "25ch" }}
             variant="outlined"
             style={{ width: "100%", marginTop: "1rem" }}
             size="small"
           >
-            <InputLabel
-              htmlFor="outlined-adornment-password"
-              className="my-font"
-            >
+            <InputLabel htmlFor="outlined-adornment-password">
               Current password
             </InputLabel>
             <OutlinedInput
-              helperText={errors.currentPasswordErrorText}
+              helperText={messsages.currentPasswordErrorText}
               id="outlined-adornment-password"
               type={state.showPassword ? "text" : "password"}
               name="currentPassword"
-              value={errors.currentPassword}
+              value={messsages.currentPassword}
               onChange={handleChange}
-              inputProps={{ className: "my-font" }}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -99,7 +195,7 @@ function ChangePassword() {
             />
           </FormControl>
           <StyledFormHelperErrorText>
-            {errors.currentPasswordErrorText}
+            {messsages.currentPasswordErrorText}
           </StyledFormHelperErrorText>
 
           <FormControl
@@ -108,18 +204,15 @@ function ChangePassword() {
             style={{ width: "100%", marginTop: "1rem" }}
             size="small"
           >
-            <InputLabel
-              htmlFor="outlined-adornment-password"
-              className="my-font"
-            >
+            <InputLabel htmlFor="outlined-adornment-password">
               New password
             </InputLabel>
             <OutlinedInput
-              helperText={errors.newPasswordErrorText}
+              helperText={messsages.newPasswordErrorText}
               id="outlined-adornment-password"
               type={state.showPassword ? "text" : "password"}
               name="newPassword"
-              value={errors.newPassword}
+              value={messsages.newPassword}
               onChange={handleChange}
               inputProps={{ className: "my-font" }}
               endAdornment={
@@ -138,7 +231,7 @@ function ChangePassword() {
             />
           </FormControl>
           <StyledFormHelperErrorText>
-            {errors.newPasswordErrorText}
+            {messsages.newPasswordErrorText}
           </StyledFormHelperErrorText>
 
           <FormControl
@@ -151,11 +244,11 @@ function ChangePassword() {
               Confirm new password
             </InputLabel>
             <OutlinedInput
-              helperText={errors.passwordErrorText}
+              helperText={messsages.newPasswordErrorText}
               id="outlined-adornment-password"
               type={state.showPassword ? "text" : "password"}
               name="confirmNewPassword"
-              value={errors.confirmNewPassword}
+              value={messsages.confirmNewPassword}
               onChange={handleChange}
               endAdornment={
                 <InputAdornment position="end">
@@ -173,7 +266,7 @@ function ChangePassword() {
             />
           </FormControl>
           <StyledFormHelperErrorText>
-            {errors.confirmNewPasswordErrorText}
+            {messsages.confirmNewPasswordErrorText}
           </StyledFormHelperErrorText>
 
           <LoadingButton
@@ -193,7 +286,6 @@ function ChangePassword() {
             color="success"
             style={{ marginTop: "2rem" }}
             onClick={handleCancel}
-            className="my-font"
           >
             Cancel
           </Button>

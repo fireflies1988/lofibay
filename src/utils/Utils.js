@@ -10,10 +10,6 @@ export async function fetchWithCredentialsAsync(
   requestOptions.headers.Authorization = `bearer ${auth.accessToken}`;
   const response = await fetch(url, requestOptions);
 
-  if (response?.status === 200) {
-    return response;
-  }
-
   if (response?.status === 401) {
     // access token is expired, call refresh token
     const refreshTokenResponse = await fetch(
@@ -42,7 +38,7 @@ export async function fetchWithCredentialsAsync(
         avatarUrl: null,
         role: null,
       });
-      return null;
+      return response;
     } else if (refreshTokenResponse.status === 200) {
       // new access token, refresh token
       const newAuthData = {
@@ -63,4 +59,6 @@ export async function fetchWithCredentialsAsync(
       return response;
     }
   }
+
+  return response;
 }
