@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import GlobalStyles from "./components/styles/Global";
@@ -21,15 +21,13 @@ const theme = {
 
 function App() {
   const { auth, setAuth } = useContext(AuthContext);
-  // const loggedIn = useMemo(
-  //   () => JSON.parse(localStorage.getItem("auth"))?.loggedIn
-  // );
 
   useEffect(() => {
     let authData = localStorage.getItem("auth");
     if (authData !== null) {
       setAuth(JSON.parse(authData));
     }
+    console.log(auth);
   }, []);
 
   return (
@@ -47,12 +45,13 @@ function App() {
             <Route index element={<Home />} />
             {auth?.accessToken !== null && (
               <Route path="account" element={<Account />}>
-                <Route index element={<EditProfile />} />
-                <Route path="password" element={<ChangePassword />} />
-                <Route path="delete" element={<DeleteAccount />} />
-                <Route path="*" element={<Navigate to="/account" />} />
-              </Route>
+              <Route index element={<EditProfile />} />
+              <Route path="password" element={<ChangePassword />} />
+              <Route path="delete" element={<DeleteAccount />} />
+              <Route path="*" element={<Navigate to="/account" />} />
+            </Route>
             )}
+            
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

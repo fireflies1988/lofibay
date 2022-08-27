@@ -89,6 +89,11 @@ function Login() {
   }
 
   async function loginAsync(email, password) {
+    setState((state) => ({
+      ...state,
+      isLoading: true,
+    }));
+
     try {
       const loginResponse = await fetch(
         `${SERVER_URL}${POST_LOGIN_ENDPOINT_PATH}`,
@@ -154,8 +159,13 @@ function Login() {
         }));
       }
     } catch (err) {
-      setMessages((messages) => ({ ...messages, errorMessage: err }));
+      setMessages((messages) => ({ ...messages, errorMessage: err.message }));
     }
+
+    setState((state) => ({
+      ...state,
+      isLoading: false,
+    }));
   }
 
   return (
