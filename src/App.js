@@ -10,6 +10,7 @@ import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
+import PhotoDetails from "./pages/PhotoDetails";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Upload from "./pages/Upload";
@@ -57,6 +58,7 @@ function App() {
                 <Route path="upload" element={<Upload />} />
               </>
             )}
+            <Route path="photos/:photoId" element={<PhotoDetails />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

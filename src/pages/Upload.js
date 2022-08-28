@@ -75,8 +75,8 @@ function Upload() {
         const uploadPhotoResponseData = await uploadPhotoResponse.json();
 
         if (
-          uploadPhotoResponse.status === 400 &&
-          uploadPhotoResponse.status === 500 &&
+          uploadPhotoResponse.status === 400 ||
+          uploadPhotoResponse.status === 500 ||
           uploadPhotoResponse.status === 422
         ) {
           setMessages((messages) => ({

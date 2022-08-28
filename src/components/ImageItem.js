@@ -7,12 +7,26 @@ import {
   ImageListItem,
   ImageListItemBar
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function ImageItem({ item }) {
+  const { auth } = useContext(AuthContext)
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
+
+  function youLikedThisPhoto() {
+    if (auth?.userId !== null) {
+      for (let i = 0; i < item?.likedPhotos?.length; i++) {
+        if (auth?.userId === item?.likedPhotos[i]?.userId) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   return (
     <ImageListItem
@@ -35,7 +49,7 @@ function ImageItem({ item }) {
                 aria-label={`star ${item.title}`}
                 size="large"
               >
-                <FavoriteBorderIcon />
+                {youLikedThisPhoto() ? <FavoriteIcon sx={{ color: "red" }} /> : <FavoriteBorderIcon />}
               </IconButton>
               <IconButton
                 sx={{ color: "rgba(255, 255, 255, 0.8)" }}
@@ -54,6 +68,8 @@ function ImageItem({ item }) {
         srcSet={`${item?.photoUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
         alt={item.photoId}
         loading="lazy"
+        style={{ cursor: "pointer" }}
+        onClick={() => navigate(`/photos/${item?.photoId}`)}
       />
       {isHovering && (
         <ImageListItemBar
