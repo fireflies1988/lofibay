@@ -5,16 +5,18 @@ import {
   Avatar,
   IconButton,
   ImageListItem,
-  ImageListItemBar,
+  ImageListItemBar
 } from "@mui/material";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function ImageItem({ item }) {
   const [isHovering, setIsHovering] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <ImageListItem
-      key={item.img}
+      key={item.photoId}
       onMouseOver={() => setIsHovering(true)}
       onMouseOut={() => setIsHovering(false)}
     >
@@ -48,9 +50,9 @@ function ImageItem({ item }) {
         />
       )}
       <img
-        src={`${item.img}?w=248&fit=crop&auto=format`}
-        srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-        alt={item.title}
+        src={`${item?.photoUrl}?w=248&fit=crop&auto=format`}
+        srcSet={`${item?.photoUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
+        alt={item.photoId}
         loading="lazy"
       />
       {isHovering && (
@@ -70,18 +72,19 @@ function ImageItem({ item }) {
                   gap: "10px",
                   cursor: "pointer",
                 }}
-                onClick={() => console.log("hello")}
+                onClick={() => navigate(`/${item?.user?.userId}`)}
               >
-                <Avatar>H</Avatar>
-                <span style={{ fontSize: "18px" }}>{item.title}</span>
+                <Avatar alt={item?.user?.userId} src={item?.user?.avatarUrl} sx={{ width: 34, height: 34 }} />
+                <span style={{ fontSize: "17px" }}>{item?.user?.firstName} {item?.user?.lastName}</span>
               </div>
             </>
           }
           actionIcon={
             <IconButton
               sx={{ color: "rgba(255, 255, 255, 0.8)" }}
-              aria-label={`info about ${item.title}`}
+              aria-label={`info about ${item?.photoId}`}
               size="large"
+              href={item?.downloadUrl}
             >
               <FileDownloadOutlinedIcon />
             </IconButton>

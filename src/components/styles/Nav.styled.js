@@ -4,6 +4,10 @@ export const Nav = styled.nav`
   background: #fff;
   padding: 0 1rem;
   border-bottom: 2px solid #e5e5e5;
+  display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 
   .brand {
     color: ${({ theme }) => theme.colors.brandLightColor};

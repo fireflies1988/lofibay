@@ -4,14 +4,17 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhotoIcon from "@mui/icons-material/Photo";
 import { TabContext, TabPanel } from "@mui/lab";
-import { Avatar, Button, Grid, Tab, Tabs } from "@mui/material";
+import { Avatar, Button, CircularProgress, Grid, Tab, Tabs } from "@mui/material";
 import { Box, Container } from "@mui/system";
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ImageGallery from "../components/ImageGallery";
-import { GET_USER_INFO_BY_ID_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
+import AuthContext from "../context/AuthProvider";
+import { GET_USER_INFO_BY_ID_ENDPOINT_PATH, GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
 
 function Profile() {
+  const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
   const { userId } = useParams();
   const [value, setValue] = useState("1");
@@ -21,18 +24,36 @@ function Profile() {
     biography: "",
     country: "America",
     avatarUrl: "",
-    userId: 0,
+    userId: "",
+  });
+  const [uploadedPhotos, setUploadedPhotos] = useState([]);
+  const { enqueueSnackbar } = useSnackbar();
+  const [state, setState] = useState({
+    isLoading: true,
+    loadingText: "Fetching data, please stand by...",
   });
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  function showSnackbar(variant, message) {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(message, {
+      variant,
+      anchorOrigin: {
+        horizontal: "right",
+        vertical: "bottom",
+      },
+    });
+  }
+
   useEffect(() => {
     if (!/\d+/.test(userId)) {
       navigate("/");
     }
     fetchUserInfoById(userId);
+    fetchUploadedPhotosByUserId(userId);
   }, [userId]);
 
   async function fetchUserInfoById(userId) {
@@ -63,6 +84,32 @@ function Profile() {
     }
   }
 
+  async function fetchUploadedPhotosByUserId(userId) {
+    try {
+      const response = await fetch(`${SERVER_URL}${GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH.replace("{id}", `${userId}`)}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow"
+      });
+      const responseData = await response.json();
+
+      if (response.status === 404) {
+        showSnackbar("error", responseData?.message);
+      } else if (response.status === 200) {
+        setUploadedPhotos(responseData?.data);
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+
+    setState((state) => ({
+      ...state,
+      isLoading: false,
+    }));
+  }
+
   return (
     <>
       <Container style={{ maxWidth: "750px", marginTop: "2rem" }}>
@@ -79,7 +126,7 @@ function Profile() {
               <span style={{ fontSize: "42px", fontWeight: "bold" }}>
                 {userInfo.firstName} {userInfo.lastName}
               </span>
-              {userInfo.userId == userId && (
+              {userInfo.userId === auth.userId && (
                 <Button
                   startIcon={<EditIcon />}
                   variant="outlined"
@@ -147,7 +194,14 @@ function Profile() {
               </Tabs>
             </Box>
             <TabPanel value="1">
-              <ImageGallery />
+              {state.isLoading ? (
+                <>
+                  <CircularProgress color="success" />
+                  <h4>{state.loadingText}</h4>
+                </>
+              ) : (
+                <ImageGallery photos={uploadedPhotos} />
+              )}
             </TabPanel>
             <TabPanel value="2">
               <ImageGallery />
