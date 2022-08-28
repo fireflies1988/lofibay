@@ -6,16 +6,17 @@ import {
   IconButton,
   ImageListItem,
   ImageListItemBar,
-  Link,
 } from "@mui/material";
 import React, { useState } from "react";
 
 function ImageItem({ item }) {
-  const [isHovering, setIsHovering] = useState(true);
+  const [isHovering, setIsHovering] = useState(false);
 
   return (
     <ImageListItem
       key={item.img}
+      onMouseOver={() => setIsHovering(true)}
+      onMouseOut={() => setIsHovering(false)}
     >
       {isHovering && (
         <ImageListItemBar
@@ -46,14 +47,12 @@ function ImageItem({ item }) {
           actionPosition="right"
         />
       )}
-
       <img
         src={`${item.img}?w=248&fit=crop&auto=format`}
         srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
         alt={item.title}
         loading="lazy"
       />
-
       {isHovering && (
         <ImageListItemBar
           sx={{
@@ -63,9 +62,18 @@ function ImageItem({ item }) {
           }}
           title={
             <>
-              <div to="#" style={{ display: "flex", alignItems: "center", gap: "10px", cursor: "pointer" }} onClick={() => console.log("hello")}>
+              <div
+                to="#"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  cursor: "pointer",
+                }}
+                onClick={() => console.log("hello")}
+              >
                 <Avatar>H</Avatar>
-                <span style={{ fontSize: "18px"}}>{item.title}</span>
+                <span style={{ fontSize: "18px" }}>{item.title}</span>
               </div>
             </>
           }

@@ -1,15 +1,16 @@
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { Button, Grid, IconButton } from "@mui/material";
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
+import AccountMenu from "./AccountMenu";
 import SearchBar from "./SearchBar";
 import { Nav } from "./styles/Nav.styled";
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import AccountMenu from "./AccountMenu";
-import AuthContext from "../context/AuthProvider";
 
 function Navbar() {
   const { auth } = useContext(AuthContext);
   const isLoggedIn = auth?.accessToken !== null;
+  const navigate =useNavigate();
 
   return (
     <Nav>
@@ -28,8 +29,9 @@ function Navbar() {
               <Button
                 variant="contained"
                 color="success"
-                sx={{ textAlign: "right" }}
+                sx={{ textAlign: "right", textTransform: "none" }}
                 size="medium"
+                onClick={() => navigate("upload")}
               >
                 Upload
               </Button>

@@ -39,7 +39,9 @@ export async function fetchWithCredentialsAsync(
         role: null,
       });
       return response;
-    } else if (refreshTokenResponse.status === 200) {
+    }
+    
+    if (refreshTokenResponse.status === 200) {
       // new access token, refresh token
       const newAuthData = {
         ...auth,
@@ -55,8 +57,6 @@ export async function fetchWithCredentialsAsync(
         auth,
         setAuth
       );
-    } else {
-      return response;
     }
   }
 

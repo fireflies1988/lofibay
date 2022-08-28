@@ -56,7 +56,7 @@ const itemData = [
 function ImageGallery() {
   return (
     <Container maxWidth="xl">
-      <ImageList variant="masonry" cols={3} gap={8}>
+      <ImageList variant="masonry" cols={4} gap={8}>
         {itemData.map((item, index) => (
           <ImageItem item={item} key={index}/>
         ))}

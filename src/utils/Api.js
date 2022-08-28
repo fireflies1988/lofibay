@@ -5,3 +5,5 @@ export const GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH = "api/users/current";
 export const POST_REFRESH_TOKEN_ENDPOINT_PATH = "api/users/refresh-token";
 export const PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH = "api/users/current";
 export const PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH = "api/users/current/password/change";
+export const GET_USER_INFO_BY_ID_ENDPOINT_PATH = "api/users/{id}";
+export const POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH = "api/photos";

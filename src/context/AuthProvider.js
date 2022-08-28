@@ -10,7 +10,8 @@ export function AuthProvider({ children }) {
     refreshToken: null,
     userId: null,
     avatarUrl: null,
-    role: null
+    role: null,
+    username: null
   });
 
   return (

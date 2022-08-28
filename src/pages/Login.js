@@ -138,6 +138,7 @@ function Login() {
               userId: userInfoResponseData?.data?.userId,
               avatarUrl: userInfoResponseData?.data?.avatarUrl,
               role: userInfoResponseData?.data?.role?.roleName,
+              username: userInfoResponseData?.data?.username
             };
           }
         } catch (err) {

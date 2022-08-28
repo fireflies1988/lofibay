@@ -10,7 +10,9 @@ import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import Upload from "./pages/Upload";
 
 const theme = {
   colors: {
@@ -43,15 +45,18 @@ function App() {
           )}
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
+            <Route path=":userId" element={<Profile />} />
             {auth?.accessToken !== null && (
-              <Route path="account" element={<Account />}>
-              <Route index element={<EditProfile />} />
-              <Route path="password" element={<ChangePassword />} />
-              <Route path="delete" element={<DeleteAccount />} />
-              <Route path="*" element={<Navigate to="/account" />} />
-            </Route>
+              <>
+                <Route path="account" element={<Account />}>
+                  <Route index element={<EditProfile />} />
+                  <Route path="password" element={<ChangePassword />} />
+                  <Route path="delete" element={<DeleteAccount />} />
+                  <Route path="*" element={<Navigate to="/account" />} />
+                </Route>
+                <Route path="upload" element={<Upload />} />
+              </>
             )}
-            
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
