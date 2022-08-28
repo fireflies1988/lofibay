@@ -11,7 +11,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImageGallery from "../components/ImageGallery";
 import AuthContext from "../context/AuthProvider";
-import { GET_USER_INFO_BY_ID_ENDPOINT_PATH, GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
+import { GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH, GET_USER_INFO_BY_ID_ENDPOINT_PATH, GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
 
 function Profile() {
   const { auth } = useContext(AuthContext);
@@ -27,6 +27,7 @@ function Profile() {
     userId: "",
   });
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
+  const [likedPhotos, setLikedPhotos] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
   const [state, setState] = useState({
     isLoading: true,
@@ -53,8 +54,37 @@ function Profile() {
       navigate("/");
     }
     fetchUserInfoById(userId);
-    fetchUploadedPhotosByUserId(userId);
   }, [userId]);
+
+  useEffect(() => {
+    if (value === "1") {
+      fetchUploadedPhotosByUserId(userId);
+    }
+    if (value === "2") {
+      fetchLikedPhotosAsync(userId);
+    }
+  }, [value]);
+
+  async function fetchLikedPhotosAsync(userId) {
+    try {
+      const response = await fetch(`${SERVER_URL}${GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH.replace("{id}", `${userId}`)}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow"
+      });
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        setLikedPhotos(responseData?.data);
+      } else {
+        showSnackbar("error", responseData?.message);
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
 
   async function fetchUserInfoById(userId) {
     const userInfoResponse = await fetch(
@@ -204,7 +234,7 @@ function Profile() {
               )}
             </TabPanel>
             <TabPanel value="2">
-              <ImageGallery />
+              <ImageGallery photos={likedPhotos} />
             </TabPanel>
             <TabPanel value="3">Item Three</TabPanel>
           </TabContext>

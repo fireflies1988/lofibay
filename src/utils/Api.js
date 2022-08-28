@@ -10,3 +10,5 @@ export const POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH = "api/photos";
 export const GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH = "api/users/{id}/photos";
 export const GET_ALL_PHOTOS_ENDPOINT_PATH = "api/photos";
 export const GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH = "api/photos/{id}";
+export const GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH = "api/users/{id}/liked-photos";
+export const POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH = "api/photos/{id}/like-or-unlike";

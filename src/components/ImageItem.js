@@ -5,17 +5,36 @@ import {
   Avatar,
   IconButton,
   ImageListItem,
-  ImageListItemBar
+  ImageListItemBar,
 } from "@mui/material";
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthProvider";
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { useSnackbar } from "notistack";
+import { fetchWithCredentialsAsync } from "../utils/Utils";
+import {
+  POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
+  SERVER_URL,
+} from "../utils/Api";
 
 function ImageItem({ item }) {
-  const { auth } = useContext(AuthContext)
+  const { auth, setAuth } = useContext(AuthContext);
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const [liked, setLiked] = useState(youLikedThisPhoto());
+
+  function showSnackbar(variant, message) {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(message, {
+      variant,
+      anchorOrigin: {
+        horizontal: "right",
+        vertical: "bottom",
+      },
+    });
+  }
 
   function youLikedThisPhoto() {
     if (auth?.userId !== null) {
@@ -26,6 +45,35 @@ function ImageItem({ item }) {
       }
     }
     return false;
+  }
+
+  async function likeOrUnlikePhotoAsync() {
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+      };
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH.replace(
+          "{id}",
+          `${item?.photoId}`
+        )}`,
+        requestOptions,
+        auth,
+        setAuth
+      );
+      const responseData = await response.json();
+      if (response.status === 200) {
+        setLiked((liked) => !liked);
+      } else {
+        showSnackbar("error", responseData?.message);
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
   }
 
   return (
@@ -49,7 +97,14 @@ function ImageItem({ item }) {
                 aria-label={`star ${item.title}`}
                 size="large"
               >
-                {youLikedThisPhoto() ? <FavoriteIcon sx={{ color: "red" }} /> : <FavoriteBorderIcon />}
+                {liked ? (
+                  <FavoriteIcon
+                    sx={{ color: "red" }}
+                    onClick={likeOrUnlikePhotoAsync}
+                  />
+                ) : (
+                  <FavoriteBorderIcon onClick={likeOrUnlikePhotoAsync} />
+                )}
               </IconButton>
               <IconButton
                 sx={{ color: "rgba(255, 255, 255, 0.8)" }}
@@ -90,8 +145,14 @@ function ImageItem({ item }) {
                 }}
                 onClick={() => navigate(`/${item?.user?.userId}`)}
               >
-                <Avatar alt={item?.user?.userId} src={item?.user?.avatarUrl} sx={{ width: 34, height: 34 }} />
-                <span style={{ fontSize: "17px" }}>{item?.user?.firstName} {item?.user?.lastName}</span>
+                <Avatar
+                  alt={item?.user?.userId}
+                  src={item?.user?.avatarUrl}
+                  sx={{ width: 34, height: 34 }}
+                />
+                <span style={{ fontSize: "17px" }}>
+                  {item?.user?.firstName} {item?.user?.lastName}
+                </span>
               </div>
             </>
           }
