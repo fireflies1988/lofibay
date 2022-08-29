@@ -18,7 +18,7 @@ import { fetchWithCredentialsAsync } from "../utils/Utils";
 import {
   PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH,
   SERVER_URL,
-} from "../utils/Api";
+} from "../utils/Endpoints";
 import AuthContext from "../context/AuthProvider";
 
 const initialMessages = {
@@ -107,7 +107,6 @@ function ChangePassword() {
       const changePasswordResponse = await fetchWithCredentialsAsync(
         `${SERVER_URL}${PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH}`,
         requestOptions,
-        auth,
         setAuth
       );
       const changePasswordResponseData = await changePasswordResponse.json();

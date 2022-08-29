@@ -1,9 +1,11 @@
 import { Button, Grid, Paper } from "@mui/material";
 import Container from "@mui/material/Container";
-import React from "react";
+import React, { useContext } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
 
 function Account() {
+  const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const lastSegment = location.pathname.substring(
@@ -41,6 +43,18 @@ function Account() {
               Change password
             </Button>
             <Button
+              onClick={() => navigate("verify")}
+              style={{
+                textTransform: "none",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+              color="success"
+              variant={lastSegment === "verify" ? "outlined" : "text"}
+            >
+              Verify your email
+            </Button>
+            <Button
               onClick={() => navigate("delete")}
               style={{
                 textTransform: "none",
@@ -52,6 +66,20 @@ function Account() {
             >
               Delete account
             </Button>
+            {auth?.role === "Admin" && (
+              <Button
+                onClick={() => navigate("admin")}
+                style={{
+                  textTransform: "none",
+                  width: "100%",
+                  justifyContent: "flex-start",
+                }}
+                color="success"
+                variant={lastSegment === "admin" ? "outlined" : "text"}
+              >
+                Admin dashboard
+              </Button>
+            )}
           </Paper>
         </Grid>
         <Grid item xs={9}>

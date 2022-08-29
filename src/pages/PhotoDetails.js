@@ -33,7 +33,7 @@ import { useNavigate } from "react-router-dom";
 import {
     GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
     SERVER_URL
-} from "../utils/Api";
+} from "../utils/Endpoints";
 
 function bytesToSize(bytes) {
   var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -156,7 +156,7 @@ function PhotoDetails() {
             >
               <LinkStyles
                 component="div"
-                onClick={() => navigate(`/${rawPhotoInfo?.user.userId}`)}
+                onClick={() => navigate(`/profiles/${rawPhotoInfo?.user.userId}`)}
                 style={{
                   fontWeight: "normal",
                   display: "flex",

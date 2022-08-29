@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import ImageGallery from "../components/ImageGallery";
 import { HomeStyles } from "../components/styles/Home.styled";
 import { useSnackbar } from "notistack";
-import { GET_ALL_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
+import { GET_ALL_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
 
 function Home() {
   const [photos, setPhotos] = useState([]);

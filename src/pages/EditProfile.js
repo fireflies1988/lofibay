@@ -18,8 +18,8 @@ import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH,
   SERVER_URL,
-} from "../utils/Api";
-import { fetchWithCredentialsAsync } from "../utils/Utils";
+} from "../utils/Endpoints";
+import { fetchWithCredentialsAsync, getAccessToken } from "../utils/Utils";
 
 function EditProfile() {
   const [initialInputs, setInitialInputs] = useState({});
@@ -48,10 +48,10 @@ function EditProfile() {
   });
 
   useEffect(() => {
-    if (auth?.accessToken !== null) {
+    if (getAccessToken()) {
       fetchUserInfoAsync();
     }
-  }, [auth]);
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -121,7 +121,6 @@ function EditProfile() {
       const userInfoResponse = await fetchWithCredentialsAsync(
         `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
         requestOptions,
-        auth,
         setAuth
       );
       const userInfoResponseData = await userInfoResponse.json();
@@ -199,7 +198,6 @@ function EditProfile() {
       const updateUserInfoResponse = await fetchWithCredentialsAsync(
         `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH}`,
         requestOptions,
-        auth,
         setAuth
       );
       const updateUserInfoResponseData = await updateUserInfoResponse.json();

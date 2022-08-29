@@ -89,7 +89,7 @@ function AccountMenu() {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={() => navigate(`/${auth.userId}`)}>
+        <MenuItem onClick={() => navigate(`/profiles/${auth.userId}`)}>
           <Avatar /> View profile
         </MenuItem>
         <MenuItem onClick={() => navigate("account")}>

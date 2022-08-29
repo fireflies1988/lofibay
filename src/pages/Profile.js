@@ -9,9 +9,10 @@ import { Box, Container } from "@mui/system";
 import { useSnackbar } from "notistack";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import CollectionGallery from "../components/CollectionGallery";
 import ImageGallery from "../components/ImageGallery";
 import AuthContext from "../context/AuthProvider";
-import { GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH, GET_USER_INFO_BY_ID_ENDPOINT_PATH, GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Api";
+import { GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH, GET_USER_INFO_BY_ID_ENDPOINT_PATH, GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
 
 function Profile() {
   const { auth } = useContext(AuthContext);
@@ -50,9 +51,6 @@ function Profile() {
   }
 
   useEffect(() => {
-    if (!/\d+/.test(userId)) {
-      navigate("/");
-    }
     fetchUserInfoById(userId);
   }, [userId]);
 
@@ -236,7 +234,9 @@ function Profile() {
             <TabPanel value="2">
               <ImageGallery photos={likedPhotos} />
             </TabPanel>
-            <TabPanel value="3">Item Three</TabPanel>
+            <TabPanel value="3">
+              <CollectionGallery  />
+            </TabPanel>
           </TabContext>
         </Box>
       </Container>

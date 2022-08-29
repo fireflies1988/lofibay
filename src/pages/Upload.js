@@ -9,7 +9,7 @@ import { fetchWithCredentialsAsync } from "../utils/Utils";
 import {
   POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH,
   SERVER_URL,
-} from "../utils/Api";
+} from "../utils/Endpoints";
 import AuthContext from "../context/AuthProvider";
 
 const initialUploadData = {
@@ -69,7 +69,6 @@ function Upload() {
         const uploadPhotoResponse = await fetchWithCredentialsAsync(
           `${SERVER_URL}${POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH}`,
           requestOptions,
-          auth,
           setAuth
         );
         const uploadPhotoResponseData = await uploadPhotoResponse.json();

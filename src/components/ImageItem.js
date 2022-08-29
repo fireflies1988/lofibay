@@ -16,7 +16,7 @@ import { fetchWithCredentialsAsync } from "../utils/Utils";
 import {
   POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
   SERVER_URL,
-} from "../utils/Api";
+} from "../utils/Endpoints";
 
 function ImageItem({ item }) {
   const { auth, setAuth } = useContext(AuthContext);
@@ -62,7 +62,6 @@ function ImageItem({ item }) {
           `${item?.photoId}`
         )}`,
         requestOptions,
-        auth,
         setAuth
       );
       const responseData = await response.json();
@@ -121,7 +120,7 @@ function ImageItem({ item }) {
       <img
         src={`${item?.photoUrl}?w=248&fit=crop&auto=format`}
         srcSet={`${item?.photoUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
-        alt={item.photoId}
+        alt={`${item?.photoId}`}
         loading="lazy"
         style={{ cursor: "pointer" }}
         onClick={() => navigate(`/photos/${item?.photoId}`)}
@@ -143,7 +142,7 @@ function ImageItem({ item }) {
                   gap: "10px",
                   cursor: "pointer",
                 }}
-                onClick={() => navigate(`/${item?.user?.userId}`)}
+                onClick={() => navigate(`/profiles/${item?.user?.userId}`)}
               >
                 <Avatar
                   alt={item?.user?.userId}

@@ -4,6 +4,7 @@ import { ThemeProvider } from "styled-components";
 import GlobalStyles from "./components/styles/Global";
 import AuthContext from "./context/AuthProvider";
 import Account from "./pages/Account";
+import AdminDashboard from "./pages/AdminDashboard";
 import ChangePassword from "./pages/ChangePassword";
 import DeleteAccount from "./pages/DeleteAccount";
 import EditProfile from "./pages/EditProfile";
@@ -14,6 +15,8 @@ import PhotoDetails from "./pages/PhotoDetails";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import Upload from "./pages/Upload";
+import VerifyEmail from "./pages/VerifyEmail";
+import { getAccessToken, getAuth } from "./utils/Utils";
 
 const theme = {
   colors: {
@@ -24,11 +27,15 @@ const theme = {
 
 function App() {
   const { auth, setAuth } = useContext(AuthContext);
+  const isLoggedIn = useMemo(
+    () => (getAccessToken() ? true : false),
+    [auth]
+  );
 
   useEffect(() => {
-    let authData = localStorage.getItem("auth");
+    let authData = getAuth();
     if (authData !== null) {
-      setAuth(JSON.parse(authData));
+      setAuth(authData);
     }
     console.log(auth);
   }, []);
@@ -38,7 +45,7 @@ function App() {
       <GlobalStyles />
       <BrowserRouter>
         <Routes>
-          {auth?.accessToken === null && (
+          {!isLoggedIn && (
             <>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -46,13 +53,15 @@ function App() {
           )}
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
-            <Route path=":userId" element={<Profile />} />
-            {auth?.accessToken !== null && (
+            <Route path="profiles/:userId" element={<Profile />} />
+            {isLoggedIn && (
               <>
                 <Route path="account" element={<Account />}>
                   <Route index element={<EditProfile />} />
                   <Route path="password" element={<ChangePassword />} />
+                  <Route path="verify" element={<VerifyEmail />} />
                   <Route path="delete" element={<DeleteAccount />} />
+                  <Route path="admin" element={<AdminDashboard />} />
                   <Route path="*" element={<Navigate to="/account" />} />
                 </Route>
                 <Route path="upload" element={<Upload />} />

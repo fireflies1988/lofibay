@@ -12,6 +12,7 @@ import {
   TextField,
 } from "@mui/material";
 import { createBrowserHistory } from "history";
+import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
@@ -21,7 +22,7 @@ import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   POST_LOGIN_ENDPOINT_PATH,
   SERVER_URL,
-} from "../utils/Api";
+} from "../utils/Endpoints";
 
 function Login() {
   const history = createBrowserHistory();
@@ -42,6 +43,18 @@ function Login() {
     successMessage: location.state?.message,
   };
   const [messages, setMessages] = useState(initialMessages);
+  const { enqueueSnackbar } = useSnackbar();
+
+  function showSnackbar(variant, message) {
+    // variant could be success, error, warning, info, or default
+    enqueueSnackbar(message, {
+      variant,
+      anchorOrigin: {
+        horizontal: "right",
+        vertical: "bottom",
+      },
+    });
+  }
 
   useEffect(() => {
     if (location.state) {
@@ -142,7 +155,7 @@ function Login() {
             };
           }
         } catch (err) {
-          console.log();
+          showSnackbar("error", err.message);
         }
 
         // save auth to local storage
