@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthProvider";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useSnackbar } from "notistack";
-import { fetchWithCredentialsAsync } from "../utils/Utils";
+import { fetchWithCredentialsAsync, youLikedThisPhoto } from "../utils/Utils";
 import {
   POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
   SERVER_URL,
@@ -23,7 +23,7 @@ function ImageItem({ item }) {
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const [liked, setLiked] = useState(youLikedThisPhoto());
+  const [liked, setLiked] = useState(youLikedThisPhoto(auth, item?.likedPhotos));
 
   function showSnackbar(variant, message) {
     // variant could be success, error, warning, info, or default
@@ -36,18 +36,12 @@ function ImageItem({ item }) {
     });
   }
 
-  function youLikedThisPhoto() {
-    if (auth?.userId !== null) {
-      for (let i = 0; i < item?.likedPhotos?.length; i++) {
-        if (auth?.userId === item?.likedPhotos[i]?.userId) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   async function likeOrUnlikePhotoAsync() {
+    if (!auth?.accessToken) {
+      showSnackbar("info", "You need to login to use this feature.");
+      return;
+    }
+
     try {
       const requestOptions = {
         method: "POST",
@@ -145,7 +139,7 @@ function ImageItem({ item }) {
                 onClick={() => navigate(`/profiles/${item?.user?.userId}`)}
               >
                 <Avatar
-                  alt={item?.user?.userId}
+                  alt={`${item?.user?.userId}`}
                   src={item?.user?.avatarUrl}
                   sx={{ width: 34, height: 34 }}
                 />

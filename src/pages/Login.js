@@ -23,6 +23,7 @@ import {
   POST_LOGIN_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
+import { saveAuth } from "../utils/Utils";
 
 function Login() {
   const history = createBrowserHistory();
@@ -159,7 +160,7 @@ function Login() {
         }
 
         // save auth to local storage
-        localStorage.setItem("auth", JSON.stringify(authData));
+        saveAuth(authData);
         setAuth(authData);
       } else if (loginResponse?.status === 401) {
         setMessages((messages) => ({

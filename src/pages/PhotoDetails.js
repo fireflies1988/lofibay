@@ -10,30 +10,36 @@ import ShareIcon from "@mui/icons-material/Share";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { LoadingButton } from "@mui/lab";
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Avatar,
-    Button,
-    Grid,
-    Paper,
-    TextField,
-    Typography
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Avatar,
+  Button,
+  Grid,
+  Paper,
+  TextField,
+  Typography
 } from "@mui/material";
 import { Container } from "@mui/system";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import moment from "moment";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ColorBar from "react-color-bar";
-import { useParams } from "react-router-dom";
-import { TagsInput } from "react-tag-input-component";
+import { useNavigate, useParams } from "react-router-dom";
+import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
-import { useNavigate } from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
 import {
-    GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
-    SERVER_URL
+  GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
+  POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
+  PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
+  SERVER_URL
 } from "../utils/Endpoints";
+import { fetchWithCredentialsAsync, youLikedThisPhoto } from "../utils/Utils";
 
 function bytesToSize(bytes) {
   var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -44,6 +50,7 @@ function bytesToSize(bytes) {
 
 function PhotoDetails() {
   const navigate = useNavigate();
+  const { auth, setAuth } = useContext(AuthContext);
   const [rawPhotoInfo, setRawPhotoInfo] = useState();
   const [inputs, setInputs] = useState({
     description: "",
@@ -55,10 +62,11 @@ function PhotoDetails() {
   const [tags, setTags] = useState([]);
   const { photoId } = useParams();
   const [state, setState] = useState({
-    isLoading: false,
+    isUpdating: false,
   });
   const [colorData, setColorData] = useState([]);
-  const [disabled, setDisabed] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [liked, setLiked] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   function showSnackbar(variant, message) {
     // variant could be success, error, warning, info, or default
@@ -71,9 +79,53 @@ function PhotoDetails() {
     });
   }
 
+  console.log(tags);
+
   useEffect(() => {
     fetchPhotoDetailsByIdAsync(photoId);
   }, []);
+
+  useEffect(() => {
+    setLiked(youLikedThisPhoto(auth, rawPhotoInfo?.likedPhotos));
+    setDisabled(!isOwner());
+  }, [rawPhotoInfo]);
+
+  function isOwner() {
+    return rawPhotoInfo?.user?.userId === auth?.userId;
+  }
+
+  async function likeOrUnlikePhotoAsync() {
+    if (!auth?.accessToken) {
+      showSnackbar("info", "You need to login to use this feature.");
+      return;
+    }
+
+    try {
+      const requestOptions = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+      };
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH.replace(
+          "{id}",
+          `${rawPhotoInfo?.photoId}`
+        )}`,
+        requestOptions,
+        setAuth
+      );
+      const responseData = await response.json();
+      if (response.status === 200) {
+        setLiked((liked) => !liked);
+      } else {
+        showSnackbar("error", responseData?.message);
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
 
   async function fetchPhotoDetailsByIdAsync(photoId) {
     try {
@@ -135,11 +187,58 @@ function PhotoDetails() {
     }
   }
 
+  async function updatePhotoInfoAsync(photoId) {
+    try {
+      const requestOptions = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        redirect: "follow",
+        body: JSON.stringify({
+          ...inputs,
+          tags,
+        }),
+      };
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH.replace(
+          "{id}",
+          `${rawPhotoInfo?.photoId}`
+        )}`,
+        requestOptions,
+        setAuth
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        showSnackbar("success", responseData?.message);
+      } else if (
+        response.status === 404 ||
+        response.status === 401 ||
+        response.status === 500
+      ) {
+        showSnackbar("error", responseData?.message);
+      } else {
+        showSnackbar("error", "Unkown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
+
+  async function handleSubmit(event) {
+    setState((state) => ({ ...state, isUpdating: true }));
+
+    await updatePhotoInfoAsync(photoId);
+
+    setState((state) => ({ ...state, isUpdating: false }));
+  }
+
   function handleCancel(event) {}
 
   function handleChange(event) {
     const { name, value } = event.target;
-    setInputs({ ...inputs, [name]: value });
+    setInputs((inputs) => ({ ...inputs, [name]: value }));
   }
 
   return (
@@ -156,7 +255,9 @@ function PhotoDetails() {
             >
               <LinkStyles
                 component="div"
-                onClick={() => navigate(`/profiles/${rawPhotoInfo?.user.userId}`)}
+                onClick={() =>
+                  navigate(`/profiles/${rawPhotoInfo?.user.userId}`)
+                }
                 style={{
                   fontWeight: "normal",
                   display: "flex",
@@ -182,12 +283,13 @@ function PhotoDetails() {
                 style={{ display: "flex", gap: "10px", alignItems: "center" }}
               >
                 <Button
-                  variant="outlined"
+                  variant={liked ? "contained" : "outlined"}
                   startIcon={<FavoriteBorderIcon />}
-                  color="success"
+                  color={liked ? "error" : "success"}
                   sx={{ height: "32px", textTransform: "none" }}
+                  onClick={likeOrUnlikePhotoAsync}
                 >
-                  Like
+                  {liked ? "Liked" : "Like"}
                 </Button>
                 <Button
                   variant="outlined"
@@ -254,14 +356,16 @@ function PhotoDetails() {
               <div
                 style={{ display: "flex", gap: "10px", alignItems: "center" }}
               >
-                <Button
-                  variant="outlined"
-                  startIcon={<DeleteOutlineIcon />}
-                  color="success"
-                  sx={{ height: "32px", textTransform: "none" }}
-                >
-                  Delete
-                </Button>
+                {!disabled && (
+                  <Button
+                    variant="outlined"
+                    startIcon={<DeleteOutlineIcon />}
+                    color="success"
+                    sx={{ height: "32px", textTransform: "none" }}
+                  >
+                    Delete
+                  </Button>
+                )}
 
                 <ImageEditorDialog photoUrl={rawPhotoInfo?.photoUrl} />
 
@@ -314,24 +418,30 @@ function PhotoDetails() {
                   multiline
                   fullWidth
                   rows={2}
-                  maxRows={2}
                   value={inputs.description}
                   onChange={handleChange}
                   size="small"
                   disabled={disabled}
                 />
 
-                <TextField
-                  style={{ width: "100%", marginTop: "1rem" }}
-                  type="text"
-                  id="outlined-error-helper-text"
-                  label="Taken at"
-                  name="takenAt"
-                  value={inputs.takenAt}
-                  onChange={handleChange}
-                  size="small"
-                  disabled={disabled}
-                />
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DesktopDatePicker
+                    label="Taken at"
+                    inputFormat="MM/DD/YYYY"
+                    value={inputs.takenAt}
+                    onChange={(newValue) =>
+                      setInputs({ ...inputs, takenAt: newValue })
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        sx={{ mt: "1rem", width: "100%" }}
+                        size="small"
+                      />
+                    )}
+                    disabled={disabled}
+                  />
+                </LocalizationProvider>
 
                 <TextField
                   style={{ width: "100%", marginTop: "1rem" }}
@@ -370,13 +480,7 @@ function PhotoDetails() {
                   disabled={disabled}
                 />
 
-                <TagsInput
-                  value={tags}
-                  onChange={setTags}
-                  name="tags"
-                  placeHolder="Tags"
-                  disabled={disabled}
-                />
+                <FixTags value={tags} setValue={setTags} fixedOptions={[]} disabled={disabled} />
 
                 {!disabled && (
                   <>
@@ -384,10 +488,14 @@ function PhotoDetails() {
                       loading={state.isUpdating}
                       loadingPosition="start"
                       variant="contained"
-                      style={{ marginTop: "1.5rem", marginRight: "1rem" }}
+                      sx={{
+                        marginTop: "1.5rem",
+                        marginRight: "1rem",
+                        textTransform: "none",
+                      }}
                       color="success"
                       startIcon={<SaveIcon />}
-                      type="submit"
+                      onClick={handleSubmit}
                       size="small"
                     >
                       Save changes
@@ -396,7 +504,7 @@ function PhotoDetails() {
                     <Button
                       variant="outlined"
                       color="success"
-                      style={{ marginTop: "1.5rem" }}
+                      sx={{ marginTop: "1.5rem", textTransform: "none" }}
                       onClick={handleCancel}
                       size="small"
                     >

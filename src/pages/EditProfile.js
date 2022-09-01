@@ -12,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import React, { useContext, useEffect, useState } from "react";
+import CountrySelect from "../components/CountrySelect";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import AuthContext from "../context/AuthProvider";
 import {
@@ -19,7 +20,11 @@ import {
   PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
-import { fetchWithCredentialsAsync, getAccessToken } from "../utils/Utils";
+import {
+  fetchWithCredentialsAsync,
+  getAccessToken,
+  saveAvatarUrl,
+} from "../utils/Utils";
 
 function EditProfile() {
   const [initialInputs, setInitialInputs] = useState({});
@@ -126,7 +131,7 @@ function EditProfile() {
       const userInfoResponseData = await userInfoResponse.json();
 
       if (userInfoResponse.status === 200) {
-        setInputs(() => ({
+        setInputs({
           avatarFile: null,
           previewAvatarUrl: userInfoResponseData?.data?.avatarUrl,
           email: userInfoResponseData?.data?.email,
@@ -134,13 +139,13 @@ function EditProfile() {
           firstName: userInfoResponseData?.data?.firstName,
           lastName: userInfoResponseData?.data?.lastName,
           dateOfBirth: userInfoResponseData?.data?.dateOfBirth,
-          phoneNumber: userInfoResponseData?.data?.phoneNumber,
-          biography: userInfoResponseData?.data?.biography,
-          city: userInfoResponseData?.data?.address?.city,
-          country: userInfoResponseData?.data?.address?.country,
-        }));
+          phoneNumber: userInfoResponseData?.data?.phoneNumber ?? "",
+          biography: userInfoResponseData?.data?.biography ?? "",
+          city: userInfoResponseData?.data?.address?.city ?? "",
+          country: userInfoResponseData?.data?.address?.country ?? "",
+        });
 
-        setInitialInputs(() => ({ ...inputs }));
+        setInitialInputs((inputs) => ({ ...inputs }));
       }
     } catch (err) {
       setState((state) => ({
@@ -166,6 +171,7 @@ function EditProfile() {
 
     try {
       const formData = new FormData();
+      console.log(inputs);
       if (inputs.avatarFile) {
         formData.append("ImageFile", inputs.avatarFile);
       }
@@ -180,6 +186,7 @@ function EditProfile() {
       if (inputs.phoneNumber) {
         formData.append("PhoneNumber", inputs.phoneNumber);
       }
+      console.log(inputs.biography);
       formData.append("Biography", inputs.biography);
       formData.append("Address.Address", "");
       formData.append("Address.District", "");
@@ -205,25 +212,26 @@ function EditProfile() {
       if (updateUserInfoResponse.status === 400) {
         setState((state) => ({
           ...state,
-          isUpdating: false,
           errorMessage: JSON.stringify(updateUserInfoResponseData?.errors),
         }));
       } else if (updateUserInfoResponse.status === 422) {
         setState((state) => ({
           ...state,
-          isUpdating: false,
           errorMessage: updateUserInfoResponseData?.message,
         }));
       } else if (updateUserInfoResponse.status === 200) {
+        saveAvatarUrl(updateUserInfoResponseData?.data?.avatarUrl);
+        setAuth((auth) => ({
+          ...auth,
+          avatarUrl: updateUserInfoResponseData?.data?.avatarUrl,
+        }));
         setState((state) => ({
           ...state,
-          isUpdating: false,
           successMessage: updateUserInfoResponseData?.message,
         }));
       } else {
         setState((state) => ({
           ...state,
-          isUpdating: false,
           errorMessage: "Unknown errors.",
         }));
       }
@@ -231,10 +239,14 @@ function EditProfile() {
       console.log(err);
       setState((state) => ({
         ...state,
-        isUpdating: false,
         errorMessage: err.message,
       }));
     }
+
+    setState((state) => ({
+      ...state,
+      isUpdating: false,
+    }));
   }
 
   return (
@@ -301,7 +313,7 @@ function EditProfile() {
 
             <TextField
               style={{ width: "100%", marginTop: "1rem" }}
-              type="email"
+              type="text"
               id="outlined-error-helper-text"
               label="Username"
               name="username"
@@ -399,19 +411,12 @@ function EditProfile() {
               {state.cityErrorText}
             </StyledFormHelperErrorText>
 
-            <TextField
-              style={{ width: "100%", marginTop: "1rem" }}
-              type="text"
-              id="outlined-error-helper-text"
-              label="Country"
-              name="country"
+            <CountrySelect
               value={inputs.country}
-              onChange={handleChange}
-              size="small"
+              onChange={(event, value) =>
+                setInputs((inputs) => ({ ...inputs, country: value }))
+              }
             />
-            <StyledFormHelperErrorText>
-              {state.countryErrorText}
-            </StyledFormHelperErrorText>
 
             <LoadingButton
               loading={state.isUpdating}

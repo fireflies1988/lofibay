@@ -1,18 +1,11 @@
 import { POST_REFRESH_TOKEN_ENDPOINT_PATH, SERVER_URL } from "./Endpoints";
 
-export async function fetchWithCredentialsAsync(
-  url,
-  requestOptions,
-  setAuth
-) {
+export async function fetchWithCredentialsAsync(url, requestOptions, setAuth) {
   requestOptions.headers = requestOptions.headers || {};
   requestOptions.headers.Authorization = `bearer ${getAccessToken()}`;
   const response = await fetch(url, requestOptions);
-  response.headers.forEach(function (value, name) {
-    console.log(name + ": " + value);
-  });
 
-  if (response?.status === 401) {
+  if (response?.status === 401 && response.headers.has("Token-Expired")) {
     // access token is expired, call refresh token
     const refreshTokenResponse = await fetch(
       `${SERVER_URL}${POST_REFRESH_TOKEN_ENDPOINT_PATH}`,
@@ -46,14 +39,13 @@ export async function fetchWithCredentialsAsync(
 
     if (refreshTokenResponse.status === 200) {
       // new access token, refresh token
-      saveTokens(refreshTokenResponseData?.data?.accessToken, refreshTokenResponseData?.data?.refreshToken)
-      setAuth((auth) => ({...auth, ...getAuth()}));
-
-      return await fetchWithCredentialsAsync(
-        url,
-        requestOptions,
-        setAuth
+      saveTokens(
+        refreshTokenResponseData?.data?.accessToken,
+        refreshTokenResponseData?.data?.refreshToken
       );
+      setAuth((auth) => ({ ...auth, ...getAuth() }));
+
+      return await fetchWithCredentialsAsync(url, requestOptions, setAuth);
     }
   }
 
@@ -77,11 +69,17 @@ export function getUserId() {
 }
 
 export function saveTokens(accessToken, refreshToken) {
-  let auth = getAuth();
   saveAuth({
-    ...auth,
+    ...getAuth(),
     accessToken: accessToken,
-    refreshToken: refreshToken
+    refreshToken: refreshToken,
+  });
+}
+
+export function saveAvatarUrl(avatarUrl) {
+  saveAuth({
+    ...getAuth(),
+    avatarUrl: avatarUrl,
   });
 }
 
@@ -91,4 +89,15 @@ export function saveAuth(auth) {
 
 export function removeAuth() {
   localStorage.removeItem("auth");
+}
+
+export function youLikedThisPhoto(auth, likedPhotos) {
+  if (auth?.userId !== null) {
+    for (let i = 0; i < likedPhotos?.length; i++) {
+      if (auth?.userId === likedPhotos[i]?.userId) {
+        return true;
+      }
+    }
+  }
+  return false;
 }

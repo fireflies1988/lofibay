@@ -1,20 +1,13 @@
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined";
 import { Button, Dialog, DialogContent } from "@mui/material";
-import React from "react";
-import ImageEditor from "./ImageEditor";
+import ImageEditor from "@toast-ui/react-image-editor";
+import React, { useEffect, useRef } from "react";
+import "tui-image-editor/dist/tui-image-editor.css";
 
 function ImageEditorDialog({ photoUrl }) {
   const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const props = {
+  const editorRef = useRef();
+  const imageEditorOptions = {
     includeUI: {
       menu: [
         "crop",
@@ -34,7 +27,7 @@ function ImageEditorDialog({ photoUrl }) {
       },
       menuBarPosition: "bottom",
       loadImage: {
-        path: photoUrl,
+        path: "https://res.cloudinary.com/dsskvx9ha/image/upload/v1636038302/sample.jpg",
         name: "SampleImage",
       },
     },
@@ -44,7 +37,22 @@ function ImageEditorDialog({ photoUrl }) {
       cornerSize: 20,
       rotatingPointOffset: 70,
     },
+    usageStatistics: true,
   };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    if (photoUrl) {
+      editorRef.current.getInstance().loadImageFromURL(photoUrl, "SampleIamge");
+    }
+  }, [photoUrl]);
 
   return (
     <>
@@ -67,7 +75,7 @@ function ImageEditorDialog({ photoUrl }) {
         sx={{ display: "flex", justifyContent: "center" }}
       >
         <DialogContent>
-          <ImageEditor {...props} />
+          <ImageEditor {...imageEditorOptions} ref={editorRef} />
         </DialogContent>
       </Dialog>
     </>

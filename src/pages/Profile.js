@@ -50,6 +50,8 @@ function Profile() {
     });
   }
 
+  console.log(userInfo);
+
   useEffect(() => {
     fetchUserInfoById(userId);
   }, [userId]);
@@ -102,12 +104,7 @@ function Profile() {
     if (userInfoResponse.status === 200) {
       setUserInfo((userInfo) => ({
         ...userInfo,
-        firstName: userInfoResponseData?.data?.firstName,
-        lastName: userInfoResponseData?.data?.lastName,
-        biography: userInfoResponseData?.data?.biography,
-        country: userInfoResponseData?.data?.address?.country,
-        avatarUrl: userInfoResponseData?.data?.avatarUrl,
-        userId: userInfoResponseData?.data?.userId,
+        ...userInfoResponseData?.data
       }));
     }
   }
@@ -199,21 +196,21 @@ function Profile() {
                 indicatorColor="secondary"
               >
                 <Tab
-                  label="Photos"
+                  label={`Photos ${userInfo.numOfUploadedPhotos}`}
                   value="1"
                   icon={<PhotoIcon />}
                   iconPosition="start"
                   sx={{ textTransform: "none" }}
                 />
                 <Tab
-                  label="Likes"
+                  label={`Likes ${userInfo.numOfLikedPhotos}`}
                   value="2"
                   icon={<FavoriteIcon />}
                   iconPosition="start"
                   sx={{ textTransform: "none" }}
                 />
                 <Tab
-                  label="Collections"
+                  label={`Collections ${userInfo.numOfCollections}`}
                   value="3"
                   icon={<CollectionsIcon />}
                   iconPosition="start"

@@ -131,6 +131,7 @@ function Footer() {
       </div>
 
       <p className="footer__copy">&#169; 2022 Lofibay. All right reserved</p>
+      <p className="footer__copy" style={{ marginTop: 0 }}>Kieu Huynh Thanh Tung</p>
     </FooterStyles>
   );
 }

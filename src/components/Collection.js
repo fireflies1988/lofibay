@@ -4,7 +4,7 @@ import React from "react";
 function Collection() {
   return (
     <>
-      <Container maxWidt="xl" style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", flexDirection: "column", maxWidth: "1200px" }}>
         <div style={{ display: "flex", gap: "3px" }}>
           <img
             alt=""
@@ -41,9 +41,7 @@ function Collection() {
         </div>
 
         <h3>Green</h3>
-      </Container>
-
-      
+      </div>
     </>
   );
 }
