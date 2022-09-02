@@ -3,27 +3,26 @@ import { LoadingButton } from "@mui/lab";
 import {
   Alert,
   Avatar,
-  Button,
-  CircularProgress,
-  Paper,
-  TextField,
+  Button, Paper,
+  TextField
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import React, { useContext, useEffect, useState } from "react";
+import CircularProgressWithText from "../components/CircularProgressWithText";
 import CountrySelect from "../components/CountrySelect";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import AuthContext from "../context/AuthProvider";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH,
-  SERVER_URL,
+  SERVER_URL
 } from "../utils/Endpoints";
 import {
   fetchWithCredentialsAsync,
   getAccessToken,
-  saveAvatarUrl,
+  saveAvatarUrl
 } from "../utils/Utils";
 
 function EditProfile() {
@@ -264,12 +263,10 @@ function EditProfile() {
           </Alert>
         )}
 
-        {state.isLoading ? (
-          <>
-            <CircularProgress color="success" />
-            <h4>{state.loadingText}</h4>
-          </>
-        ) : (
+        <CircularProgressWithText
+          loading={state.isLoading}
+          text={state.loadingText}
+        >
           <form onSubmit={handleSubmit}>
             <div
               style={{
@@ -439,7 +436,7 @@ function EditProfile() {
               Cancel
             </Button>
           </form>
-        )}
+        </CircularProgressWithText>
       </Paper>
     </>
   );

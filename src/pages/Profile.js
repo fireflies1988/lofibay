@@ -4,7 +4,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhotoIcon from "@mui/icons-material/Photo";
 import { TabContext, TabPanel } from "@mui/lab";
-import { Avatar, Button, CircularProgress, Grid, Tab, Tabs } from "@mui/material";
+import { Avatar, Button, Grid, Tab, Tabs } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import { useSnackbar } from "notistack";
 import React, { useContext, useEffect, useState } from "react";
@@ -12,7 +12,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import CollectionGallery from "../components/CollectionGallery";
 import ImageGallery from "../components/ImageGallery";
 import AuthContext from "../context/AuthProvider";
-import { GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH, GET_USER_INFO_BY_ID_ENDPOINT_PATH, GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
+import {
+  GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH,
+  GET_USER_COLLECTIONS_ENDPOINT_PATH,
+  GET_USER_INFO_BY_ID_ENDPOINT_PATH,
+  GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH,
+  SERVER_URL,
+} from "../utils/Endpoints";
+import CircularProgressWithText from "../components/CircularProgressWithText";
 
 function Profile() {
   const { auth } = useContext(AuthContext);
@@ -29,11 +36,9 @@ function Profile() {
   });
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [likedPhotos, setLikedPhotos] = useState([]);
+  const [collections, setCollections] = useState([]);
   const { enqueueSnackbar } = useSnackbar();
-  const [state, setState] = useState({
-    isLoading: true,
-    loadingText: "Fetching data, please stand by...",
-  });
+  const [loading, setLoading] = useState(true);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -50,8 +55,6 @@ function Profile() {
     });
   }
 
-  console.log(userInfo);
-
   useEffect(() => {
     fetchUserInfoById(userId);
   }, [userId]);
@@ -59,21 +62,29 @@ function Profile() {
   useEffect(() => {
     if (value === "1") {
       fetchUploadedPhotosByUserId(userId);
-    }
-    if (value === "2") {
+    } else if (value === "2") {
       fetchLikedPhotosAsync(userId);
+    } else if (value === "3") {
+      fetchUserCollectionsAsync(userId);
     }
   }, [value]);
 
   async function fetchLikedPhotosAsync(userId) {
+    setLoading(true);
     try {
-      const response = await fetch(`${SERVER_URL}${GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH.replace("{id}", `${userId}`)}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow"
-      });
+      const response = await fetch(
+        `${SERVER_URL}${GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH.replace(
+          "{id}",
+          `${userId}`
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
       const responseData = await response.json();
 
       if (response.status === 200) {
@@ -84,6 +95,7 @@ function Profile() {
     } catch (err) {
       showSnackbar("error", err.message);
     }
+    setLoading(false);
   }
 
   async function fetchUserInfoById(userId) {
@@ -104,20 +116,31 @@ function Profile() {
     if (userInfoResponse.status === 200) {
       setUserInfo((userInfo) => ({
         ...userInfo,
-        ...userInfoResponseData?.data
+        ...userInfoResponseData?.data,
       }));
+    } else if (userInfoResponse.status === 404) {
+      showSnackbar("error", userInfoResponseData?.message);
+    } else {
+      showSnackbar("error", "Unknown error.");
     }
   }
 
   async function fetchUploadedPhotosByUserId(userId) {
+    setLoading(true);
     try {
-      const response = await fetch(`${SERVER_URL}${GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH.replace("{id}", `${userId}`)}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow"
-      });
+      const response = await fetch(
+        `${SERVER_URL}${GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH.replace(
+          "{id}",
+          `${userId}`
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
       const responseData = await response.json();
 
       if (response.status === 404) {
@@ -128,11 +151,38 @@ function Profile() {
     } catch (err) {
       showSnackbar("error", err.message);
     }
+    setLoading(false);
+  }
 
-    setState((state) => ({
-      ...state,
-      isLoading: false,
-    }));
+  async function fetchUserCollectionsAsync(userId) {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `${SERVER_URL}${GET_USER_COLLECTIONS_ENDPOINT_PATH.replace(
+          "{id}",
+          `${userId}`
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        setCollections(responseData?.data);
+      } else if (response.status === 404) {
+        showSnackbar("error", responseData?.message);
+      } else {
+        showSnackbar("error", "Unknown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+    setLoading(false);
   }
 
   return (
@@ -219,20 +269,19 @@ function Profile() {
               </Tabs>
             </Box>
             <TabPanel value="1">
-              {state.isLoading ? (
-                <>
-                  <CircularProgress color="success" />
-                  <h4>{state.loadingText}</h4>
-                </>
-              ) : (
+              <CircularProgressWithText loading={loading}>
                 <ImageGallery photos={uploadedPhotos} />
-              )}
+              </CircularProgressWithText>
             </TabPanel>
             <TabPanel value="2">
-              <ImageGallery photos={likedPhotos} />
+              <CircularProgressWithText loading={loading}>
+                <ImageGallery photos={likedPhotos} />
+              </CircularProgressWithText>
             </TabPanel>
             <TabPanel value="3">
-              <CollectionGallery  />
+              <CircularProgressWithText loading={loading}>
+                <CollectionGallery collections={collections} />
+              </CircularProgressWithText>
             </TabPanel>
           </TabContext>
         </Box>

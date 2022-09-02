@@ -4,6 +4,7 @@ export const LinkStyles = styled.a`
   font-weight: bold;
   font-size: 17px;
   color: rgb(75, 75, 75);
+  cursor: pointer;
 
   &:link,
   &:visited {

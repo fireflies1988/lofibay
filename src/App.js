@@ -6,6 +6,7 @@ import AuthContext from "./context/AuthProvider";
 import Account from "./pages/Account";
 import AdminDashboard from "./pages/AdminDashboard";
 import ChangePassword from "./pages/ChangePassword";
+import Collection from "./pages/Collection";
 import DeleteAccount from "./pages/DeleteAccount";
 import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
@@ -68,6 +69,7 @@ function App() {
               </>
             )}
             <Route path="photos/:photoId" element={<PhotoDetails />} />
+            <Route path="collections/:collectionId" element={<Collection />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

@@ -1,14 +1,12 @@
-import { Container, ImageList, Pagination } from "@mui/material";
+import { Pagination } from "@mui/material";
 import React from "react";
-import Collection from "./Collection";
+import CollectionItem from "./CollectionItem";
 
 function CollectionGallery({ collections }) {
   return (
-    <Container maxWidth="lg">
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <Collection />
-        <Collection />
-        <Collection />
+    <>
+      <div style={{ display: "flex", justifyContent: "space-evenly", flexWrap: "wrap", marginTop: "1rem" }}>
+        {collections?.length > 0 && collections.map((item) => <CollectionItem key={item?.collectionId} item={item} />)}
       </div>
 
       <Pagination
@@ -21,7 +19,7 @@ function CollectionGallery({ collections }) {
         variant="outlined"
         color="secondary"
       />
-    </Container>
+    </>
   );
 }
 

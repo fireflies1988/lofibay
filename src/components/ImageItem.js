@@ -129,7 +129,6 @@ function ImageItem({ item }) {
           title={
             <>
               <div
-                to="#"
                 style={{
                   display: "flex",
                   alignItems: "center",

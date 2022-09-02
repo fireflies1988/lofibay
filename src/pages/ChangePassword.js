@@ -172,7 +172,6 @@ function ChangePassword() {
               Current password
             </InputLabel>
             <OutlinedInput
-              helperText={messsages.currentPasswordErrorText}
               id="outlined-adornment-password"
               type={state.showPassword ? "text" : "password"}
               name="currentPassword"
@@ -207,13 +206,11 @@ function ChangePassword() {
               New password
             </InputLabel>
             <OutlinedInput
-              helperText={messsages.newPasswordErrorText}
               id="outlined-adornment-password"
               type={state.showPassword ? "text" : "password"}
               name="newPassword"
               value={messsages.newPassword}
               onChange={handleChange}
-              inputProps={{ className: "my-font" }}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -243,7 +240,6 @@ function ChangePassword() {
               Confirm new password
             </InputLabel>
             <OutlinedInput
-              helperText={messsages.newPasswordErrorText}
               id="outlined-adornment-password"
               type={state.showPassword ? "text" : "password"}
               name="confirmNewPassword"
