@@ -22,3 +22,4 @@ export const PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH = "api/collec
 export const DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH = "api/collections/{id}";
 export const PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH = "api/photos/{id}/download";
 export const POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH = "api/collections";
+export const POST_WITH_AUTH_ADD_OR_REMOVE_PHOTO_TO_OR_FROM_COLLECTION_ENDPOINT_PATH = "api/collections/{id}/add-or-remove-photo?photoId={photoId}";

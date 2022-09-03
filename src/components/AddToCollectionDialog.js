@@ -46,15 +46,17 @@ function AddToCollectionDialog({ open, onClose, photoId, photoUrl }) {
     setCreateDialogOpened(false);
   }
 
-  function handleCreate(event) {
+  async function handleCreate(event) {
     if (!inputs.collectionName) {
       showSnackbar("error", "The Name field is required.");
     } else {
-
+      await createNewCollectionAsync(photoId);
+      await fetchYourCollectionsAsync(setYourCollections);
+      setCreateDialogOpened(false);
     }
   }
 
-  async function createNewCollectionAsync() {
+  async function createNewCollectionAsync(photoId) {
     try {
       const response = await fetchWithCredentialsAsync(
         `${SERVER_URL}${POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH}`,

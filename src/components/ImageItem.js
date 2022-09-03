@@ -15,12 +15,17 @@ import AuthContext from "../contexts/AuthProvider";
 import YourCollectionsContext from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
-import { isThisPhotoAlreadyInOneOfYourCollection, youLikedThisPhoto } from "../utils/Utils";
+import {
+  isThisPhotoAlreadyInOneOfYourCollection,
+  youLikedThisPhoto,
+} from "../utils/Utils";
 import AddToCollectionDialog from "./AddToCollectionDialog";
 
 function ImageItem({ item }) {
   const { auth, setAuth } = useContext(AuthContext);
-  const { yourCollections, setYourCollections } = useContext(YourCollectionsContext);
+  const { yourCollections, setYourCollections } = useContext(
+    YourCollectionsContext
+  );
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
   const { showSnackbar } = useNotistack();
@@ -30,7 +35,9 @@ function ImageItem({ item }) {
   const [addToDialogOpened, setAddToDialogOpened] = useState(false);
 
   useEffect(() => {
-    setCollected(isThisPhotoAlreadyInOneOfYourCollection(item?.photoId, yourCollections));
+    setCollected(
+      isThisPhotoAlreadyInOneOfYourCollection(item?.photoId, yourCollections)
+    );
   }, [item?.photoId, yourCollections]);
 
   function handleClickAddToCollectionButton() {
@@ -67,20 +74,14 @@ function ImageItem({ item }) {
                 sx={{ color: "rgba(255, 255, 255, 0.8)" }}
                 aria-label={`star ${item.title}`}
                 size="large"
+                onClick={() =>
+                  likeOrUnlikePhotoAsync(item?.photoId, liked, setLiked)
+                }
               >
                 {liked ? (
-                  <FavoriteIcon
-                    sx={{ color: "red" }}
-                    onClick={() =>
-                      likeOrUnlikePhotoAsync(item?.photoId, liked, setLiked)
-                    }
-                  />
+                  <FavoriteIcon sx={{ color: "red" }} />
                 ) : (
-                  <FavoriteBorderIcon
-                    onClick={() =>
-                      likeOrUnlikePhotoAsync(item?.photoId, liked, setLiked)
-                    }
-                  />
+                  <FavoriteBorderIcon />
                 )}
               </IconButton>
               <IconButton
