@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import { LoginContainer } from "../components/styles/Login.styled";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   POST_LOGIN_ENDPOINT_PATH,

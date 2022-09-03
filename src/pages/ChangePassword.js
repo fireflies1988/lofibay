@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import {
   PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH,

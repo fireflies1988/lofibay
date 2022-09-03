@@ -9,7 +9,7 @@ import {
   POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 
 const initialUploadData = {

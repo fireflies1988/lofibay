@@ -2,7 +2,7 @@ import { useContext, useEffect, useMemo } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import GlobalStyles from "./components/styles/Global";
-import AuthContext from "./context/AuthProvider";
+import AuthContext from "./contexts/AuthProvider";
 import Account from "./pages/Account";
 import AdminDashboard from "./pages/AdminDashboard";
 import ChangePassword from "./pages/ChangePassword";

@@ -13,7 +13,7 @@ import React, { useContext, useEffect, useState } from "react";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import CountrySelect from "../components/CountrySelect";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,

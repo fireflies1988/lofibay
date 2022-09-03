@@ -1,6 +1,7 @@
 import { useContext } from "react";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import {
+  GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH,
   PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH,
   POST_REFRESH_TOKEN_ENDPOINT_PATH,
   POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
@@ -65,7 +66,7 @@ function useFetch() {
         );
         setAuth((auth) => ({ ...auth, ...getAuth() }));
 
-        return await fetchWithCredentialsAsync(url, requestOptions, setAuth);
+        return await fetchWithCredentialsAsync(url, requestOptions);
       }
     }
 
@@ -126,14 +127,43 @@ function useFetch() {
       } else if (response.status === 404 || response.status === 422) {
         showSnackbar("error", responseData?.message);
       } else {
-        showSnackbar("error", "Unknown error.")
+        showSnackbar("error", "Unknown error.");
       }
     } catch (err) {
       showSnackbar("error", err.message);
     }
   }
 
-  return { increaseDownloadsByOneAsync, fetchWithCredentialsAsync, likeOrUnlikePhotoAsync };
+  async function fetchYourCollectionsAsync(setData) {
+    try {
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        setData(responseData?.data);
+      } else {
+        showSnackbar("error", "Unknown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
+
+  return {
+    increaseDownloadsByOneAsync,
+    fetchWithCredentialsAsync,
+    likeOrUnlikePhotoAsync,
+    fetchYourCollectionsAsync,
+  };
 }
 
 export default useFetch;

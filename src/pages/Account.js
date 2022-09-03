@@ -2,7 +2,7 @@ import { Button, Grid, Paper } from "@mui/material";
 import Container from "@mui/material/Container";
 import React, { useContext } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 
 function Account() {
   const { auth } = useContext(AuthContext);

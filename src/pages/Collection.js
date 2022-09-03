@@ -19,7 +19,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import ImageGallery from "../components/ImageGallery";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {

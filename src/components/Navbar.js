@@ -2,7 +2,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { Button, Grid, IconButton } from "@mui/material";
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import AccountMenu from "./AccountMenu";
 import SearchBar from "./SearchBar";
 import { Nav } from "./styles/Nav.styled";

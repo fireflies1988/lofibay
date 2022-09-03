@@ -11,7 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import CollectionGallery from "../components/CollectionGallery";
 import ImageGallery from "../components/ImageGallery";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
@@ -19,9 +19,9 @@ import {
   GET_USER_COLLECTIONS_ENDPOINT_PATH,
   GET_USER_INFO_BY_ID_ENDPOINT_PATH,
   GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH,
-  GET_WITH_AUTH_USER_COLLECTIONS_ENDPOINT_PATH,
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
-  SERVER_URL
+  GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH,
+  SERVER_URL,
 } from "../utils/Endpoints";
 import { getUserId } from "../utils/Utils";
 
@@ -43,7 +43,7 @@ function Profile() {
   const [collections, setCollections] = useState([]);
   const { showSnackbar } = useNotistack();
   const [loading, setLoading] = useState(true);
-  const { fetchWithCredentialsAsync } = useFetch();
+  const { fetchWithCredentialsAsync, fetchYourCollectionsAsync } = useFetch();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -103,7 +103,7 @@ function Profile() {
               "Content-Type": "application/json",
             },
             redirect: "follow",
-          },
+          }
         );
         const userInfoResponseData = await userInfoResponse.json();
         if (userInfoResponse.status === 200) {
@@ -176,28 +176,10 @@ function Profile() {
 
   async function fetchUserCollectionsAsync(userId) {
     setLoading(true);
-    try {
-      if (getUserId() == userId) {
-        const response = await fetchWithCredentialsAsync(
-          `${SERVER_URL}${GET_WITH_AUTH_USER_COLLECTIONS_ENDPOINT_PATH}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            redirect: "follow",
-          },
-        );
-        const responseData = await response.json();
-
-        if (response.status === 200) {
-          setCollections(responseData?.data);
-        } else if (response.status === 404) {
-          showSnackbar("error", responseData?.message);
-        } else {
-          showSnackbar("error", "Unknown error.");
-        }
-      } else {
+    if (getUserId() == userId) {
+      await fetchYourCollectionsAsync(setCollections);
+    } else {
+      try {
         const response = await fetch(
           `${SERVER_URL}${GET_USER_COLLECTIONS_ENDPOINT_PATH.replace(
             "{id}",
@@ -220,9 +202,9 @@ function Profile() {
         } else {
           showSnackbar("error", "Unknown error.");
         }
+      } catch (err) {
+        showSnackbar("error", err.message);
       }
-    } catch (err) {
-      showSnackbar("error", err.message);
     }
     setLoading(false);
   }

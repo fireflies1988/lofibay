@@ -17,7 +17,7 @@ import {
   Grid,
   Paper,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import { Container } from "@mui/system";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -31,14 +31,14 @@ import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
-import AuthContext from "../context/AuthProvider";
+import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
   DELETE_WITH_AUTH_SOFT_DELETE_PHOTO_ENPOINT_PATH,
   GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
   PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
-  SERVER_URL,
+  SERVER_URL
 } from "../utils/Endpoints";
 import { youLikedThisPhoto } from "../utils/Utils";
 
@@ -74,8 +74,6 @@ function PhotoDetails() {
     increaseDownloadsByOneAsync,
     likeOrUnlikePhotoAsync,
   } = useFetch();
-
-  console.log(tags);
 
   useEffect(() => {
     fetchPhotoDetailsByIdAsync(photoId);

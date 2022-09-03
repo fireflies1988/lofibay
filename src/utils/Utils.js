@@ -47,3 +47,14 @@ export function youLikedThisPhoto(likedPhotos) {
   }
   return false;
 }
+
+export function isThisPhotoAlreadyInOneOfYourCollection(photoId, yourCollections) {
+  for (let i = 0; i < yourCollections?.length; i++) {
+    for (let j = 0; j < yourCollections[i]?.photoCollections?.length; j++) {
+      if (yourCollections[i]?.photoCollections[j]?.photoId == photoId) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
