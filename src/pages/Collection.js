@@ -1,4 +1,3 @@
-import { InputSharp } from "@mui/icons-material";
 import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock";
 import SaveIcon from "@mui/icons-material/Save";
@@ -12,31 +11,32 @@ import {
   DialogTitle,
   FormControlLabel,
   FormGroup,
-  TextField,
+  TextField
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useSnackbar } from "notistack";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import ImageGallery from "../components/ImageGallery";
 import AuthContext from "../context/AuthProvider";
+import useFetch from "../hooks/useFetch";
+import useNotistack from "../hooks/useNotistack";
 import {
   DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH,
   GET_COLLECTION_INFO_ENPOINT_PATH,
   GET_PHOTOS_OF_COLLECTION_ENDPOINT_PATH,
   PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH,
-  SERVER_URL,
+  SERVER_URL
 } from "../utils/Endpoints";
-import { fetchWithCredentialsAsync, getUserId } from "../utils/Utils";
+import { getUserId } from "../utils/Utils";
 
 function Collection() {
   const { auth, setAuth } = useContext(AuthContext);
   const { collectionId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useNotistack();
   const [collectionInfo, setCollectionInfo] = useState();
   const [photos, setPhotos] = useState();
   const [open, setOpen] = useState(false);
@@ -45,6 +45,7 @@ function Collection() {
     description: "",
     isPrivate: false,
   });
+  const { fetchWithCredentialsAsync } = useFetch();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -63,17 +64,6 @@ function Collection() {
   const handleClose = () => {
     setOpen(false);
   };
-
-  function showSnackbar(variant, message) {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "bottom",
-      },
-    });
-  }
 
   useEffect(() => {
     fetchCollectionInfoAsync(collectionId);
@@ -168,8 +158,7 @@ function Collection() {
           body: JSON.stringify({
             ...inputs
           })
-        },
-        setAuth
+        }
       );
       const responseData = await response.json();
 
@@ -207,8 +196,7 @@ function Collection() {
             "Content-Type": "application/json",
           },
           redirect: "follow"
-        },
-        setAuth
+        }
       );
       const responseData = await response.json();
 

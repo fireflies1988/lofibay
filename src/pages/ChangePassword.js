@@ -1,3 +1,4 @@
+import SaveIcon from "@mui/icons-material/Save";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { LoadingButton } from "@mui/lab";
@@ -9,17 +10,16 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  Paper,
+  Paper
 } from "@mui/material";
 import React, { useContext, useState } from "react";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
-import SaveIcon from "@mui/icons-material/Save";
-import { fetchWithCredentialsAsync } from "../utils/Utils";
+import AuthContext from "../context/AuthProvider";
+import useFetch from "../hooks/useFetch";
 import {
   PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH,
-  SERVER_URL,
+  SERVER_URL
 } from "../utils/Endpoints";
-import AuthContext from "../context/AuthProvider";
 
 const initialMessages = {
   currentPasswordErrorText: "",
@@ -41,6 +41,7 @@ function ChangePassword() {
     isUpdating: false,
   });
   const [messsages, setMessages] = useState(initialMessages);
+  const { fetchWithCredentialsAsync } = useFetch();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -106,8 +107,7 @@ function ChangePassword() {
 
       const changePasswordResponse = await fetchWithCredentialsAsync(
         `${SERVER_URL}${PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH}`,
-        requestOptions,
-        setAuth
+        requestOptions
       );
       const changePasswordResponseData = await changePasswordResponse.json();
 

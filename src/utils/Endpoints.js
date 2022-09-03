@@ -20,3 +20,4 @@ export const GET_COLLECTION_INFO_ENPOINT_PATH = "api/collections/{id}";
 export const GET_PHOTOS_OF_COLLECTION_ENDPOINT_PATH = "api/collections/{id}/photos";
 export const PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH = "api/collections/{id}";
 export const DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH = "api/collections/{id}";
+export const PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH = "api/photos/{id}/download";

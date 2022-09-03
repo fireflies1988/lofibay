@@ -14,13 +14,13 @@ import CircularProgressWithText from "../components/CircularProgressWithText";
 import CountrySelect from "../components/CountrySelect";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import AuthContext from "../context/AuthProvider";
+import useFetch from "../hooks/useFetch";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH,
   SERVER_URL
 } from "../utils/Endpoints";
 import {
-  fetchWithCredentialsAsync,
   getAccessToken,
   saveAvatarUrl
 } from "../utils/Utils";
@@ -50,6 +50,7 @@ function EditProfile() {
     isUpdating: false,
     loadingText: "Fetching data, please stand by...",
   });
+  const { fetchWithCredentialsAsync } = useFetch();
 
   useEffect(() => {
     if (getAccessToken()) {
@@ -124,8 +125,7 @@ function EditProfile() {
       };
       const userInfoResponse = await fetchWithCredentialsAsync(
         `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
-        requestOptions,
-        setAuth
+        requestOptions
       );
       const userInfoResponseData = await userInfoResponse.json();
 
@@ -203,8 +203,7 @@ function EditProfile() {
 
       const updateUserInfoResponse = await fetchWithCredentialsAsync(
         `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH}`,
-        requestOptions,
-        setAuth
+        requestOptions
       );
       const updateUserInfoResponseData = await updateUserInfoResponse.json();
 

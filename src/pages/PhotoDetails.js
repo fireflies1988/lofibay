@@ -13,18 +13,17 @@ import {
   AccordionDetails,
   AccordionSummary,
   Avatar,
-  Button, Grid,
+  Button,
+  Grid,
   Paper,
-  Slide,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { Container } from "@mui/system";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DesktopDatePicker } from "@mui/x-date-pickers/DesktopDatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import moment from "moment";
-import { useSnackbar } from "notistack";
 import React, { useContext, useEffect, useState } from "react";
 import ColorBar from "react-color-bar";
 import { useNavigate, useParams } from "react-router-dom";
@@ -33,14 +32,15 @@ import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../context/AuthProvider";
+import useFetch from "../hooks/useFetch";
+import useNotistack from "../hooks/useNotistack";
 import {
   DELETE_WITH_AUTH_SOFT_DELETE_PHOTO_ENPOINT_PATH,
   GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
-  POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
   PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
-  SERVER_URL
+  SERVER_URL,
 } from "../utils/Endpoints";
-import { fetchWithCredentialsAsync, youLikedThisPhoto } from "../utils/Utils";
+import { youLikedThisPhoto } from "../utils/Utils";
 
 function bytesToSize(bytes) {
   var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -48,10 +48,6 @@ function bytesToSize(bytes) {
   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
   return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
 }
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
 
 function PhotoDetails() {
   const navigate = useNavigate();
@@ -72,27 +68,12 @@ function PhotoDetails() {
   const [colorData, setColorData] = useState([]);
   const [disabled, setDisabled] = useState(true);
   const [liked, setLiked] = useState(false);
-  const { enqueueSnackbar } = useSnackbar();
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  function showSnackbar(variant, message) {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "bottom",
-      },
-    });
-  }
+  const { showSnackbar } = useNotistack();
+  const {
+    fetchWithCredentialsAsync,
+    increaseDownloadsByOneAsync,
+    likeOrUnlikePhotoAsync,
+  } = useFetch();
 
   console.log(tags);
 
@@ -101,45 +82,12 @@ function PhotoDetails() {
   }, []);
 
   useEffect(() => {
-    setLiked(youLikedThisPhoto(auth, rawPhotoInfo?.likedPhotos));
+    setLiked(youLikedThisPhoto(rawPhotoInfo?.likedPhotos));
     setDisabled(!isOwner());
   }, [rawPhotoInfo]);
 
   function isOwner() {
     return rawPhotoInfo?.user?.userId === auth?.userId;
-  }
-
-  async function likeOrUnlikePhotoAsync() {
-    if (!auth?.accessToken) {
-      showSnackbar("info", "You need to login to use this feature.");
-      return;
-    }
-
-    try {
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow",
-      };
-      const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH.replace(
-          "{id}",
-          `${rawPhotoInfo?.photoId}`
-        )}`,
-        requestOptions,
-        setAuth
-      );
-      const responseData = await response.json();
-      if (response.status === 200) {
-        setLiked((liked) => !liked);
-      } else {
-        showSnackbar("error", responseData?.message);
-      }
-    } catch (err) {
-      showSnackbar("error", err.message);
-    }
   }
 
   async function fetchPhotoDetailsByIdAsync(photoId) {
@@ -220,8 +168,7 @@ function PhotoDetails() {
           "{id}",
           `${rawPhotoInfo?.photoId}`
         )}`,
-        requestOptions,
-        setAuth
+        requestOptions
       );
       const responseData = await response.json();
 
@@ -255,8 +202,7 @@ function PhotoDetails() {
           "{id}",
           `${rawPhotoInfo?.photoId}`
         )}`,
-        requestOptions,
-        setAuth
+        requestOptions
       );
       const responseData = await response.json();
 
@@ -342,7 +288,13 @@ function PhotoDetails() {
                   startIcon={<FavoriteBorderIcon />}
                   color={liked ? "error" : "success"}
                   sx={{ height: "32px", textTransform: "none" }}
-                  onClick={likeOrUnlikePhotoAsync}
+                  onClick={() =>
+                    likeOrUnlikePhotoAsync(
+                      rawPhotoInfo?.photoId,
+                      liked,
+                      setLiked
+                    )
+                  }
                 >
                   {liked ? "Liked" : "Like"}
                 </Button>
@@ -360,6 +312,9 @@ function PhotoDetails() {
                   sx={{ height: "32px", textTransform: "none" }}
                   component="a"
                   href={rawPhotoInfo?.downloadUrl}
+                  onClick={() =>
+                    increaseDownloadsByOneAsync(rawPhotoInfo?.photoId)
+                  }
                 >
                   Download
                 </Button>

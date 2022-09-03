@@ -5,12 +5,12 @@ import React, { useContext, useState } from "react";
 import { LinkStyles } from "../components/styles/Link.styled";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { TagsInput } from "react-tag-input-component";
-import { fetchWithCredentialsAsync } from "../utils/Utils";
 import {
   POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
 import AuthContext from "../context/AuthProvider";
+import useFetch from "../hooks/useFetch";
 
 const initialUploadData = {
   previewImageUrl: "",
@@ -29,6 +29,7 @@ function Upload() {
     successMessage: "",
     errorMessage: "",
   });
+  const { fetchWithCredentialsAsync } = useFetch();
 
   function showPreview(e) {
     setUploadData((uploadData) => ({
@@ -68,8 +69,7 @@ function Upload() {
 
         const uploadPhotoResponse = await fetchWithCredentialsAsync(
           `${SERVER_URL}${POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH}`,
-          requestOptions,
-          setAuth
+          requestOptions
         );
         const uploadPhotoResponseData = await uploadPhotoResponse.json();
 

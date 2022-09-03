@@ -1,73 +1,27 @@
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import {
   Avatar,
   IconButton,
   ImageListItem,
-  ImageListItemBar,
+  ImageListItemBar
 } from "@mui/material";
-import React, { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthContext from "../context/AuthProvider";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import { useSnackbar } from "notistack";
-import { fetchWithCredentialsAsync, youLikedThisPhoto } from "../utils/Utils";
-import {
-  POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
-  SERVER_URL,
-} from "../utils/Endpoints";
+import useFetch from "../hooks/useFetch";
+import useNotistack from "../hooks/useNotistack";
+import { youLikedThisPhoto } from "../utils/Utils";
 
 function ImageItem({ item }) {
   const { auth, setAuth } = useContext(AuthContext);
   const [isHovering, setIsHovering] = useState(false);
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const [liked, setLiked] = useState(youLikedThisPhoto(auth, item?.likedPhotos));
-
-  function showSnackbar(variant, message) {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "bottom",
-      },
-    });
-  }
-
-  async function likeOrUnlikePhotoAsync() {
-    if (!auth?.accessToken) {
-      showSnackbar("info", "You need to login to use this feature.");
-      return;
-    }
-
-    try {
-      const requestOptions = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow",
-      };
-      const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH.replace(
-          "{id}",
-          `${item?.photoId}`
-        )}`,
-        requestOptions,
-        setAuth
-      );
-      const responseData = await response.json();
-      if (response.status === 200) {
-        setLiked((liked) => !liked);
-      } else {
-        showSnackbar("error", responseData?.message);
-      }
-    } catch (err) {
-      showSnackbar("error", err.message);
-    }
-  }
+  const { showSnackbar } = useNotistack();
+  const [liked, setLiked] = useState(youLikedThisPhoto(item?.likedPhotos));
+  const { increaseDownloadsByOneAsync, likeOrUnlikePhotoAsync } = useFetch();
 
   return (
     <ImageListItem
@@ -93,10 +47,10 @@ function ImageItem({ item }) {
                 {liked ? (
                   <FavoriteIcon
                     sx={{ color: "red" }}
-                    onClick={likeOrUnlikePhotoAsync}
+                    onClick={() => likeOrUnlikePhotoAsync(item?.photoId, liked, setLiked)}
                   />
                 ) : (
-                  <FavoriteBorderIcon onClick={likeOrUnlikePhotoAsync} />
+                  <FavoriteBorderIcon onClick={() => likeOrUnlikePhotoAsync(item?.photoId, liked, setLiked)} />
                 )}
               </IconButton>
               <IconButton
@@ -154,6 +108,7 @@ function ImageItem({ item }) {
               aria-label={`info about ${item?.photoId}`}
               size="large"
               href={item?.downloadUrl}
+              onClick={() => increaseDownloadsByOneAsync(item?.photoId)}
             >
               <FileDownloadOutlinedIcon />
             </IconButton>

@@ -6,12 +6,14 @@ import PhotoIcon from "@mui/icons-material/Photo";
 import { TabContext, TabPanel } from "@mui/lab";
 import { Avatar, Button, Grid, Tab, Tabs } from "@mui/material";
 import { Box, Container } from "@mui/system";
-import { useSnackbar } from "notistack";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import CircularProgressWithText from "../components/CircularProgressWithText";
 import CollectionGallery from "../components/CollectionGallery";
 import ImageGallery from "../components/ImageGallery";
 import AuthContext from "../context/AuthProvider";
+import useFetch from "../hooks/useFetch";
+import useNotistack from "../hooks/useNotistack";
 import {
   GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH,
   GET_USER_COLLECTIONS_ENDPOINT_PATH,
@@ -19,10 +21,9 @@ import {
   GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH,
   GET_WITH_AUTH_USER_COLLECTIONS_ENDPOINT_PATH,
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
-  SERVER_URL,
+  SERVER_URL
 } from "../utils/Endpoints";
-import CircularProgressWithText from "../components/CircularProgressWithText";
-import { fetchWithCredentialsAsync, getUserId } from "../utils/Utils";
+import { getUserId } from "../utils/Utils";
 
 function Profile() {
   const { auth, setAuth } = useContext(AuthContext);
@@ -40,23 +41,13 @@ function Profile() {
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const [likedPhotos, setLikedPhotos] = useState([]);
   const [collections, setCollections] = useState([]);
-  const { enqueueSnackbar } = useSnackbar();
+  const { showSnackbar } = useNotistack();
   const [loading, setLoading] = useState(true);
+  const { fetchWithCredentialsAsync } = useFetch();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
-  function showSnackbar(variant, message) {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "bottom",
-      },
-    });
-  }
 
   useEffect(() => {
     fetchUserInfoById(userId);
@@ -112,7 +103,7 @@ function Profile() {
               "Content-Type": "application/json",
             },
             redirect: "follow",
-          }
+          },
         );
         const userInfoResponseData = await userInfoResponse.json();
         if (userInfoResponse.status === 200) {
@@ -196,7 +187,6 @@ function Profile() {
             },
             redirect: "follow",
           },
-          setAuth
         );
         const responseData = await response.json();
 

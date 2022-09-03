@@ -3,29 +3,21 @@ import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import ImageGallery from "../components/ImageGallery";
 import { HomeStyles } from "../components/styles/Home.styled";
-import { useSnackbar } from "notistack";
 import { GET_ALL_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
+import CircularProgressWithText from "../components/CircularProgressWithText";
+import useNotistack from "../hooks/useNotistack";
 
 function Home() {
   const [photos, setPhotos] = useState([]);
-  const { enqueueSnackbar } = useSnackbar();
-
-  function showSnackbar(variant, message) {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "bottom",
-      },
-    });
-  }
+  const { showSnackbar } = useNotistack()
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchPhotosAsync();
   }, []);
 
   async function fetchPhotosAsync() {
+    setLoading(true);
     try {
       const response = await fetch(
         `${SERVER_URL}${GET_ALL_PHOTOS_ENDPOINT_PATH}`,
@@ -47,6 +39,7 @@ function Home() {
     } catch (err) {
       showSnackbar("error", err.message);
     }
+    setLoading(false);
   }
 
   return (
@@ -54,7 +47,9 @@ function Home() {
       <Header />
       <Container maxWidth="xl">
         <h2 className="title">Free Stock Photos</h2>
-        <ImageGallery photos={photos}/>
+        <CircularProgressWithText loading={loading}>
+          <ImageGallery photos={photos} />
+        </CircularProgressWithText>
       </Container>
     </HomeStyles>
   );
