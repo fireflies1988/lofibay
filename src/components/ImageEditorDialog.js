@@ -60,8 +60,9 @@ function ImageEditorDialog({ photoUrl }) {
         variant="outlined"
         startIcon={<AutoAwesomeOutlinedIcon />}
         color="success"
-        sx={{ height: "32px", textTransform: "none" }}
+        sx={{ textTransform: "none" }}
         onClick={handleClickOpen}
+        size="small"
       >
         Editor
       </Button>

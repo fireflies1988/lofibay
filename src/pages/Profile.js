@@ -17,12 +17,15 @@ import {
   GET_USER_COLLECTIONS_ENDPOINT_PATH,
   GET_USER_INFO_BY_ID_ENDPOINT_PATH,
   GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH,
+  GET_WITH_AUTH_USER_COLLECTIONS_ENDPOINT_PATH,
+  GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
 import CircularProgressWithText from "../components/CircularProgressWithText";
+import { fetchWithCredentialsAsync, getUserId } from "../utils/Utils";
 
 function Profile() {
-  const { auth } = useContext(AuthContext);
+  const { auth, setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const { userId } = useParams();
   const [value, setValue] = useState("1");
@@ -99,29 +102,55 @@ function Profile() {
   }
 
   async function fetchUserInfoById(userId) {
-    const userInfoResponse = await fetch(
-      `${SERVER_URL}${GET_USER_INFO_BY_ID_ENDPOINT_PATH.replace(
-        "{id}",
-        `${userId}`
-      )}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        redirect: "follow",
+    try {
+      if (getUserId() == userId) {
+        const userInfoResponse = await fetchWithCredentialsAsync(
+          `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            redirect: "follow",
+          }
+        );
+        const userInfoResponseData = await userInfoResponse.json();
+        if (userInfoResponse.status === 200) {
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            ...userInfoResponseData?.data,
+          }));
+        } else {
+          showSnackbar("error", "Unknown error.");
+        }
+      } else {
+        const userInfoResponse = await fetch(
+          `${SERVER_URL}${GET_USER_INFO_BY_ID_ENDPOINT_PATH.replace(
+            "{id}",
+            `${userId}`
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            redirect: "follow",
+          }
+        );
+        const userInfoResponseData = await userInfoResponse.json();
+        if (userInfoResponse.status === 200) {
+          setUserInfo((userInfo) => ({
+            ...userInfo,
+            ...userInfoResponseData?.data,
+          }));
+        } else if (userInfoResponse.status === 404) {
+          showSnackbar("error", userInfoResponseData?.message);
+        } else {
+          showSnackbar("error", "Unknown error.");
+        }
       }
-    );
-    const userInfoResponseData = await userInfoResponse.json();
-    if (userInfoResponse.status === 200) {
-      setUserInfo((userInfo) => ({
-        ...userInfo,
-        ...userInfoResponseData?.data,
-      }));
-    } else if (userInfoResponse.status === 404) {
-      showSnackbar("error", userInfoResponseData?.message);
-    } else {
-      showSnackbar("error", "Unknown error.");
+    } catch (err) {
+      showSnackbar("error", err.message);
     }
   }
 
@@ -157,27 +186,50 @@ function Profile() {
   async function fetchUserCollectionsAsync(userId) {
     setLoading(true);
     try {
-      const response = await fetch(
-        `${SERVER_URL}${GET_USER_COLLECTIONS_ENDPOINT_PATH.replace(
-          "{id}",
-          `${userId}`
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
+      if (getUserId() == userId) {
+        const response = await fetchWithCredentialsAsync(
+          `${SERVER_URL}${GET_WITH_AUTH_USER_COLLECTIONS_ENDPOINT_PATH}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            redirect: "follow",
           },
-          redirect: "follow",
-        }
-      );
-      const responseData = await response.json();
+          setAuth
+        );
+        const responseData = await response.json();
 
-      if (response.status === 200) {
-        setCollections(responseData?.data);
-      } else if (response.status === 404) {
-        showSnackbar("error", responseData?.message);
+        if (response.status === 200) {
+          setCollections(responseData?.data);
+        } else if (response.status === 404) {
+          showSnackbar("error", responseData?.message);
+        } else {
+          showSnackbar("error", "Unknown error.");
+        }
       } else {
-        showSnackbar("error", "Unknown error.");
+        const response = await fetch(
+          `${SERVER_URL}${GET_USER_COLLECTIONS_ENDPOINT_PATH.replace(
+            "{id}",
+            `${userId}`
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            redirect: "follow",
+          }
+        );
+        const responseData = await response.json();
+
+        if (response.status === 200) {
+          setCollections(responseData?.data);
+        } else if (response.status === 404) {
+          showSnackbar("error", responseData?.message);
+        } else {
+          showSnackbar("error", "Unknown error.");
+        }
       }
     } catch (err) {
       showSnackbar("error", err.message);

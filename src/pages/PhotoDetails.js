@@ -1,5 +1,4 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
@@ -14,17 +13,11 @@ import {
   AccordionDetails,
   AccordionSummary,
   Avatar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
+  Button, Grid,
   Paper,
   Slide,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import { Container } from "@mui/system";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -35,6 +28,7 @@ import { useSnackbar } from "notistack";
 import React, { useContext, useEffect, useState } from "react";
 import ColorBar from "react-color-bar";
 import { useNavigate, useParams } from "react-router-dom";
+import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
@@ -44,7 +38,7 @@ import {
   GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
   POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
   PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
-  SERVER_URL,
+  SERVER_URL
 } from "../utils/Endpoints";
 import { fetchWithCredentialsAsync, youLikedThisPhoto } from "../utils/Utils";
 
@@ -418,37 +412,13 @@ function PhotoDetails() {
                 style={{ display: "flex", gap: "10px", alignItems: "center" }}
               >
                 {!disabled && (
-                  <>
-                    <Button
-                      variant="outlined"
-                      startIcon={<DeleteOutlineIcon />}
-                      color="error"
-                      sx={{ height: "32px", textTransform: "none" }}
-                      onClick={handleClickOpen}
-                    >
-                      Delete
-                    </Button>
-                    <Dialog
-                      open={open}
-                      TransitionComponent={Transition}
-                      keepMounted
-                      onClose={handleClose}
-                      aria-describedby="alert-dialog-slide-description"
-                    >
-                      <DialogTitle>
-                        Delete photo
-                      </DialogTitle>
-                      <DialogContent>
-                        <DialogContentText id="alert-dialog-slide-description">
-                          Are you sure you want to delete this photo?
-                        </DialogContentText>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleDeletePhoto}>Yes</Button>
-                        <Button onClick={handleClose}>No</Button>
-                      </DialogActions>
-                    </Dialog>
-                  </>
+                  <ConfirmDeleteDialog
+                    buttonText="Delete"
+                    buttonSize="small"
+                    title="Delete photo"
+                    content="Are you sure you want to delete this photo?"
+                    onConfirm={handleDeletePhoto}
+                  />
                 )}
 
                 <ImageEditorDialog photoUrl={rawPhotoInfo?.photoUrl} />
@@ -457,7 +427,8 @@ function PhotoDetails() {
                   variant="outlined"
                   startIcon={<ShareIcon />}
                   color="success"
-                  sx={{ height: "32px", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
+                  size="small"
                 >
                   Share
                 </Button>
@@ -465,8 +436,9 @@ function PhotoDetails() {
                 <Button
                   variant="outlined"
                   color="success"
-                  sx={{ height: "32px", textTransform: "none" }}
+                  sx={{ textTransform: "none" }}
                   startIcon={<FlagIcon />}
+                  size="small"
                 >
                   Report
                 </Button>

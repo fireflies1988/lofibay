@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { StyledCollectionItem } from "./styles/Collection.styled";
 import { LinkStyles } from "./styles/Link.styled";
+import LockIcon from '@mui/icons-material/Lock';
 
 function CollectionItem({ item }) {
   const navigate = useNavigate();
@@ -60,10 +61,13 @@ function CollectionItem({ item }) {
           fontWeight: "500",
           marginTop: "10px",
           marginBottom: "2px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px"
         }}
         onClick={() => navigate(`/collections/${item?.collectionId}`)}
       >
-        {item?.collectionName}
+        {item?.isPrivate && <LockIcon fontSize="small" />}{item?.collectionName}
       </div>
       <div>
         {item?.numOfPhotos} photos · Curated by{" "}
