@@ -7,6 +7,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import { LoginContainer } from "../components/styles/Login.styled";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import { POST_SIGNUP_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
+import useNotistack from "../hooks/useNotistack";
 
 const initialErrors = {
   emailErrorText: "",
@@ -33,6 +34,7 @@ function Register() {
     isLoading: false,
   });
   const [errors, setErrors] = useState(initialErrors);
+  const { showSnackbar } = useNotistack();
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -79,6 +81,7 @@ function Register() {
             message: "Your account has been created. Login now."
           }
         });
+        showSnackbar("info", signUpResponseData?.message);
       } else if (signUpResponse?.status === 422) {
         setErrors((errors) => ({
           ...errors,

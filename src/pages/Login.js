@@ -4,6 +4,11 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LoadingButton from "@mui/lab/LoadingButton";
 import {
   Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControl,
   IconButton,
   InputAdornment,
@@ -12,14 +17,16 @@ import {
   TextField,
 } from "@mui/material";
 import { createBrowserHistory } from "history";
-import { useSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
+import { LinkStyles } from "../components/styles/Link.styled";
 import { LoginContainer } from "../components/styles/Login.styled";
 import AuthContext from "../contexts/AuthProvider";
+import useNotistack from "../hooks/useNotistack";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
+  POST_FORGOT_PASSWORD_ENDPOINT_PATH,
   POST_LOGIN_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
@@ -44,18 +51,9 @@ function Login() {
     successMessage: location.state?.message,
   };
   const [messages, setMessages] = useState(initialMessages);
-  const { enqueueSnackbar } = useSnackbar();
-
-  function showSnackbar(variant, message) {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar(message, {
-      variant,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "bottom",
-      },
-    });
-  }
+  const [forgotPasswordDialogOpened, setForgotPasswordDialogOpened] = useState(false);
+  const [requestEmail, setRequestEmail] = useState();
+  const { showSnackbar } = useNotistack();
 
   useEffect(() => {
     if (location.state) {
@@ -152,7 +150,7 @@ function Login() {
               userId: userInfoResponseData?.data?.userId,
               avatarUrl: userInfoResponseData?.data?.avatarUrl,
               role: userInfoResponseData?.data?.role?.roleName,
-              username: userInfoResponseData?.data?.username
+              username: userInfoResponseData?.data?.username,
             };
           }
         } catch (err) {
@@ -181,6 +179,43 @@ function Login() {
       ...state,
       isLoading: false,
     }));
+  }
+
+  async function handleRequestPasswordReset() {
+    if (!requestEmail) {
+      showSnackbar("error", "Request email is required.");
+    } else {
+      await forgotPasswordAsync();
+    }
+  }
+
+  async function forgotPasswordAsync() {
+    try {
+      const response = await fetch(
+        `${SERVER_URL}${POST_FORGOT_PASSWORD_ENDPOINT_PATH}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+          body: JSON.stringify({
+            email: requestEmail
+          }),
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        showSnackbar("success", "A request password reset email was sent to your email. Please check your inbox and follow the instructions.");
+      } else if (response.status === 422 || response.status === 500) {
+        showSnackbar("error", responseData?.message);
+      } else {
+        showSnackbar("error", "Unkown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
   }
 
   return (
@@ -248,7 +283,39 @@ function Login() {
         </StyledFormHelperErrorText>
 
         <div className="forgot-password">
-          <Link to="/">Forgot password?</Link>
+          <LinkStyles
+            style={{ fontWeight: "500" }}
+            onClick={() => setForgotPasswordDialogOpened(true)}
+          >
+            Forgot password?
+          </LinkStyles>
+          <Dialog open={forgotPasswordDialogOpened} onClose={() => setForgotPasswordDialogOpened(false)} maxWidth="sm">
+            <DialogTitle>Forgot your password?</DialogTitle>
+            <DialogContent>
+              <TextField
+                sx={{ mt: "1rem" }}
+                fullWidth
+                type="email"
+                id="outlined-error-helper-text"
+                label="Email"
+                name="requestEmail"
+                size="small"
+                value={requestEmail}
+                onChange={(e) => setRequestEmail(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button
+                onClick={handleRequestPasswordReset}
+                variant="contained"
+                color="success"
+                sx={{ textTransform: "none" }}
+                fullWidth
+              >
+                Request password reset
+              </Button>
+            </DialogActions>
+          </Dialog>
         </div>
 
         <LoadingButton
