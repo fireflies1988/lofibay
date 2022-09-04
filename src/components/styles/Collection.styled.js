@@ -55,10 +55,10 @@ export const RightColumnOfAddToDialog = styled.div`
 export const StyledCollectionCard = styled.div`
   .card {
     height: 80px;
-    background: url(${props => props.thumbnail}) no-repeat center;
+    background: url(${(props) => props.thumbnail}) no-repeat center;
     background-color: #80808075;
     background-size: cover;
-    box-shadow: ${props => props.boxShadow};
+    box-shadow: ${(props) => props.boxShadow};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -67,7 +67,7 @@ export const StyledCollectionCard = styled.div`
     cursor: pointer;
 
     &:hover {
-      box-shadow: ${props => props.boxShadowOnHover};
+      box-shadow: ${(props) => props.boxShadowOnHover};
     }
 
     .card__left {
@@ -75,5 +75,35 @@ export const StyledCollectionCard = styled.div`
       flex-direction: column;
       gap: 5px;
     }
+  }
+`;
+
+export const CollectionHeader = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 2rem;
+
+  .leftpart {
+    &__title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1.5rem;
+    }
+
+    &__more {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: gray;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .rightpart {
+    display: flex;
+    gap: 0.75rem;
   }
 `;

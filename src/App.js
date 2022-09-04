@@ -7,6 +7,7 @@ import Account from "./pages/Account";
 import AdminDashboard from "./pages/AdminDashboard";
 import ChangePassword from "./pages/ChangePassword";
 import Collection from "./pages/Collection";
+import CollectionSlideshow from "./pages/CollectionSlideshow";
 import DeleteAccount from "./pages/DeleteAccount";
 import EditProfile from "./pages/EditProfile";
 import Home from "./pages/Home";
@@ -28,10 +29,7 @@ const theme = {
 
 function App() {
   const { auth, setAuth } = useContext(AuthContext);
-  const isLoggedIn = useMemo(
-    () => (getAccessToken() ? true : false),
-    [auth]
-  );
+  const isLoggedIn = useMemo(() => (getAccessToken() ? true : false), [auth]);
 
   useEffect(() => {
     let authData = getAuth();
@@ -69,7 +67,12 @@ function App() {
               </>
             )}
             <Route path="photos/:photoId" element={<PhotoDetails />} />
-            <Route path="collections/:collectionId" element={<Collection />} />
+            <Route path="collections/:collectionId" element={<Collection />}>
+              {isLoggedIn && (
+                <Route path="slideshow" element={<CollectionSlideshow />} />
+              )}
+              <Route path="*" element={<Navigate to="./" />} />
+            </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

@@ -10,14 +10,18 @@ import {
   FormControlLabel,
   FormGroup,
   Grid,
-  TextField
+  TextField,
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import React, { useContext, useState } from "react";
 import YourCollectionsContext from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
-import { POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
+import {
+  POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH,
+  SERVER_URL,
+} from "../utils/Endpoints";
+import CheckboxLabel from "./CheckboxLabel";
 import CollectionCard from "./CollectionCard";
 import { RightColumnOfAddToDialog } from "./styles/Collection.styled";
 
@@ -30,7 +34,9 @@ function AddToCollectionDialog({ open, onClose, photoId, photoUrl }) {
   });
   const { showSnackbar } = useNotistack();
   const { fetchWithCredentialsAsync, fetchYourCollectionsAsync } = useFetch();
-  const { yourCollections, setYourCollections } = useContext(YourCollectionsContext);
+  const { yourCollections, setYourCollections } = useContext(
+    YourCollectionsContext
+  );
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -68,7 +74,7 @@ function AddToCollectionDialog({ open, onClose, photoId, photoUrl }) {
           redirect: "follow",
           body: JSON.stringify({
             ...inputs,
-            photoId: photoId
+            photoId: photoId,
           }),
         }
       );
@@ -155,30 +161,22 @@ function AddToCollectionDialog({ open, onClose, photoId, photoUrl }) {
                       value={inputs.description}
                       onChange={handleChange}
                     />
-                    <FormGroup sx={{ mt: "1rem" }}>
-                      <FormControlLabel
-                        control={
-                          <Checkbox
-                            color="success"
-                            checked={inputs.isPrivate}
-                            onChange={(e) =>
-                              setInputs((inputs) => ({
-                                ...inputs,
-                                isPrivate: e.target.checked,
-                              }))
-                            }
-                          />
-                        }
-                        label={
-                          <div
-                            style={{ display: "flex", alignItems: "center" }}
-                          >
-                            <span>Make collection private</span>&nbsp;
-                            <LockIcon fontSize="small" />
-                          </div>
-                        }
-                      />
-                    </FormGroup>
+                    <CheckboxLabel
+                      sx={{ mt: "1rem" }}
+                      checked={inputs.isPrivate}
+                      onChange={(e) =>
+                        setInputs((inputs) => ({
+                          ...inputs,
+                          isPrivate: e.target.checked,
+                        }))
+                      }
+                      label={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          <span>Make collection private</span>&nbsp;
+                          <LockIcon fontSize="small" />
+                        </div>
+                      }
+                    />
                   </DialogContent>
                   <DialogActions>
                     <Button

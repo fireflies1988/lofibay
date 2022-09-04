@@ -11,25 +11,29 @@ import {
   DialogTitle,
   FormControlLabel,
   FormGroup,
-  TextField
+  TextField,
 } from "@mui/material";
 import { Container } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import ImageGallery from "../components/ImageGallery";
+import { CollectionHeader } from "../components/styles/Collection.styled";
 import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
+import PausePresentationIcon from "@mui/icons-material/PausePresentation";
 import {
   DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH,
   GET_COLLECTION_INFO_ENPOINT_PATH,
   GET_PHOTOS_OF_COLLECTION_ENDPOINT_PATH,
   PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH,
-  SERVER_URL
+  SERVER_URL,
 } from "../utils/Endpoints";
-import { getUserId } from "../utils/Utils";
+import { getAccessToken, getUserId } from "../utils/Utils";
+import CheckboxLabel from "../components/CheckboxLabel";
 
 function Collection() {
   const { auth, setAuth } = useContext(AuthContext);
@@ -46,6 +50,10 @@ function Collection() {
     isPrivate: false,
   });
   const { fetchWithCredentialsAsync } = useFetch();
+  const location = useLocation();
+  const lastSegment = location.pathname.substring(
+    location.pathname.lastIndexOf("/") + 1
+  );
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -64,6 +72,14 @@ function Collection() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  function handleClickSlideshow() {
+    if (getAccessToken()) {
+      lastSegment === "slideshow" ? navigate("./") : navigate("slideshow");
+    } else {
+      showSnackbar("info", "You need to login to use this feature.");
+    }
+  }
 
   useEffect(() => {
     fetchCollectionInfoAsync(collectionId);
@@ -156,8 +172,8 @@ function Collection() {
           },
           redirect: "follow",
           body: JSON.stringify({
-            ...inputs
-          })
+            ...inputs,
+          }),
         }
       );
       const responseData = await response.json();
@@ -195,7 +211,7 @@ function Collection() {
           headers: {
             "Content-Type": "application/json",
           },
-          redirect: "follow"
+          redirect: "follow",
         }
       );
       const responseData = await response.json();
@@ -218,24 +234,7 @@ function Collection() {
   }
 
   return (
-    <Container maxWidth="xl" sx={{ textAlign: "center", position: "relative" }}>
-      {auth?.userId == collectionInfo?.user?.userId && (
-        <Button
-          startIcon={<EditIcon />}
-          variant="outlined"
-          color="success"
-          sx={{
-            textTransform: "none",
-            position: "absolute",
-            top: "1rem",
-            right: "1rem",
-          }}
-          size="small"
-          onClick={handleClickOpen}
-        >
-          Edit
-        </Button>
-      )}
+    <Container maxWidth="xl">
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Edit collection</DialogTitle>
         <DialogContent>
@@ -263,28 +262,22 @@ function Collection() {
             value={inputs.description}
             onChange={handleChange}
           />
-          <FormGroup sx={{ mt: "1rem" }}>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  color="success"
-                  checked={inputs.isPrivate}
-                  onChange={(e) =>
-                    setInputs((inputs) => ({
-                      ...inputs,
-                      isPrivate: e.target.checked,
-                    }))
-                  }
-                />
-              }
-              label={
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <span>Make collection private</span>&nbsp;
-                  <LockIcon fontSize="small" />
-                </div>
-              }
-            />
-          </FormGroup>
+          <CheckboxLabel
+            sx={{ mt: "1rem" }}
+            checked={inputs.isPrivate}
+            onChange={(e) =>
+              setInputs((inputs) => ({
+                ...inputs,
+                isPrivate: e.target.checked,
+              }))
+            }
+            label={
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <span>Make collection private</span>&nbsp;
+                <LockIcon fontSize="small" />
+              </div>
+            }
+          />
         </DialogContent>
         <DialogActions sx={{ justifyContent: "space-between" }}>
           <ConfirmDeleteDialog
@@ -304,53 +297,84 @@ function Collection() {
           </Button>
         </DialogActions>
       </Dialog>
+      <CollectionHeader>
+        <div className="leftpart">
+          <div className="leftpart__title">
+            {collectionInfo?.isPrivate && <LockIcon fontSize="large" />}
+            <div style={{ fontSize: "2em", fontWeight: "bold" }}>
+              {collectionInfo?.collectionName}
+            </div>
+          </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "10px",
-        }}
-      >
-        {collectionInfo?.isPrivate && <LockIcon fontSize="large" />}
-        <h1>{collectionInfo?.collectionName}</h1>
-      </div>
+          <p>{collectionInfo?.description}</p>
+          <div className="leftpart__more">
+            <span style={{ fontStyle: "italic" }}>
+              {photos?.length} photos collected by{" "}
+            </span>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                navigate(`/profiles/${collectionInfo?.user?.userId}`)
+              }
+            >
+              <Avatar
+                alt=""
+                src={collectionInfo?.user?.avatarUrl}
+                sx={{ width: 32, height: 32 }}
+              />
+              <span>
+                {collectionInfo?.user?.firstName}{" "}
+                {collectionInfo?.user?.lastName}
+              </span>
+            </span>
+          </div>
+        </div>
 
-      <p>{collectionInfo?.description}</p>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          color: "gray",
-          justifyContent: "center",
-          marginBottom: "2rem",
-        }}
-      >
-        <span style={{ fontStyle: "italic" }}>
-          {photos?.length} photos collected by{" "}
-        </span>
-        <span
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            cursor: "pointer",
-          }}
-          onClick={() => navigate(`/profiles/${collectionInfo?.user?.userId}`)}
-        >
-          <Avatar
-            alt=""
-            src={collectionInfo?.user?.avatarUrl}
-            sx={{ width: 32, height: 32 }}
-          />
-          <span>
-            {collectionInfo?.user?.firstName} {collectionInfo?.user?.lastName}
-          </span>
-        </span>
-      </div>
+        <div className="rightpart">
+          {" "}
+          {auth?.userId == collectionInfo?.user?.userId && (
+            <Button
+              startIcon={<EditIcon />}
+              variant="outlined"
+              color="success"
+              sx={{
+                textTransform: "none",
+              }}
+              size="small"
+              onClick={handleClickOpen}
+            >
+              Edit
+            </Button>
+          )}
+          <Button
+            startIcon={
+              lastSegment === "slideshow" ? (
+                <PausePresentationIcon />
+              ) : (
+                <SlideshowIcon />
+              )
+            }
+            variant="outlined"
+            color="success"
+            sx={{
+              textTransform: "none",
+            }}
+            size="small"
+            onClick={handleClickSlideshow}
+          >
+            Slideshow
+          </Button>
+        </div>
+      </CollectionHeader>
 
+      <Outlet context={photos} />
+
+      <h2 style={{ textAlign: "center" }}>Photos</h2>
       <CircularProgressWithText loading={loading}>
         <ImageGallery photos={photos} />
       </CircularProgressWithText>

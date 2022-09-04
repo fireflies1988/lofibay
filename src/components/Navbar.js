@@ -10,7 +10,7 @@ import { Nav } from "./styles/Nav.styled";
 function Navbar() {
   const { auth } = useContext(AuthContext);
   const isLoggedIn = auth?.accessToken !== null;
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   return (
     <Nav>
