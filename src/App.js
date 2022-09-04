@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import GlobalStyles from "./components/styles/Global";
 import AuthContext from "./contexts/AuthProvider";
+import { YourCollectionsProvider } from "./contexts/YourCollectionsProvider";
 import Account from "./pages/Account";
 import AdminDashboard from "./pages/AdminDashboard";
 import ChangePassword from "./pages/ChangePassword";
@@ -19,6 +20,7 @@ import PhotoDetails from "./pages/PhotoDetails";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import RejectedPhotos from "./pages/RejectedPhotos";
+import SearchResult from "./pages/SearchResult";
 import Upload from "./pages/Upload";
 import UploadedPhotos from "./pages/UploadedPhotos";
 import VerifyEmail from "./pages/VerifyEmail";
@@ -58,6 +60,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="profiles/:userId" element={<Profile />} />
+            <Route path="search/:keywords" element={<SearchResult />} />
             {isLoggedIn && (
               <>
                 <Route path="account" element={<Account />}>
@@ -78,7 +81,14 @@ function App() {
                 <Route path="deleted-photos" element={<DeletedPhotos />} />
               </Route>
             )}
-            <Route path="photos/:photoId" element={<PhotoDetails />} />
+            <Route
+              path="photos/:photoId"
+              element={
+                <YourCollectionsProvider>
+                  <PhotoDetails />
+                </YourCollectionsProvider>
+              }
+            />
             <Route path="collections/:collectionId" element={<Collection />}>
               {isLoggedIn && (
                 <Route path="slideshow" element={<CollectionSlideshow />} />

@@ -29,3 +29,5 @@ export const POST_FORGOT_PASSWORD_ENDPOINT_PATH = "api/users/password/forgot";
 export const GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH = "api/admin/photos?state={state}&orderBy={orderBy}&desc={desc}";
 export const GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH = "api/admin/photos/deleted?orderBy={orderBy}&desc={desc}";
 export const PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH = "api/admin/photos/{id}?photoStateId={photoStateId}";
+export const GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH = "api/photos?keywords={keywords}";
+export const GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH = "api/collections?keywords={keywords}";

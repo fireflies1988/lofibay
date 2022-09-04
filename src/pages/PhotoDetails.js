@@ -17,7 +17,7 @@ import {
   Grid,
   Paper,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { Container } from "@mui/system";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -27,20 +27,22 @@ import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import ColorBar from "react-color-bar";
 import { useNavigate, useParams } from "react-router-dom";
+import AddToCollectionDialog from "../components/AddToCollectionDialog";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../contexts/AuthProvider";
+import YourCollectionsContext, { YourCollectionsProvider } from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
   DELETE_WITH_AUTH_SOFT_DELETE_PHOTO_ENPOINT_PATH,
   GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
   PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
-  SERVER_URL
+  SERVER_URL,
 } from "../utils/Endpoints";
-import { youLikedThisPhoto } from "../utils/Utils";
+import { isThisPhotoAlreadyInOneOfYourCollection, youLikedThisPhoto } from "../utils/Utils";
 
 function bytesToSize(bytes) {
   var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -60,6 +62,9 @@ function PhotoDetails() {
     camera: "",
     software: "",
   });
+  const { yourCollections, setYourCollections } = useContext(
+    YourCollectionsContext
+  );
   const [tags, setTags] = useState([]);
   const { photoId } = useParams();
   const [state, setState] = useState({
@@ -69,6 +74,8 @@ function PhotoDetails() {
   const [disabled, setDisabled] = useState(true);
   const [liked, setLiked] = useState(false);
   const { showSnackbar } = useNotistack();
+  const [addToDialogOpened, setAddToDialogOpened] = useState(false);
+  const [collected, setCollected] = useState(false);
   const {
     fetchWithCredentialsAsync,
     increaseDownloadsByOneAsync,
@@ -83,6 +90,12 @@ function PhotoDetails() {
     setLiked(youLikedThisPhoto(rawPhotoInfo?.likedPhotos));
     setDisabled(!isOwner());
   }, [rawPhotoInfo]);
+
+  useEffect(() => {
+    setCollected(
+      isThisPhotoAlreadyInOneOfYourCollection(photoId, yourCollections)
+    );
+  }, [photoId, yourCollections]);
 
   function isOwner() {
     return rawPhotoInfo?.user?.userId === auth?.userId;
@@ -240,8 +253,22 @@ function PhotoDetails() {
     setInputs((inputs) => ({ ...inputs, [name]: value }));
   }
 
+  function handleClickAddToCollectionButton() {
+    if (!auth?.accessToken) {
+      showSnackbar("info", "You need to login to use this feature.");
+      return;
+    }
+    setAddToDialogOpened(true);
+  }
+
   return (
     <Container maxWidth="xl" sx={{ mt: "1rem" }}>
+      <AddToCollectionDialog
+        open={addToDialogOpened}
+        onClose={() => setAddToDialogOpened(false)}
+        photoId={photoId}
+        photoUrl={rawPhotoInfo?.photoUrl}
+      />
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Paper variant="outlined" sx={{ padding: "0.75rem" }}>
@@ -297,10 +324,11 @@ function PhotoDetails() {
                   {liked ? "Liked" : "Like"}
                 </Button>
                 <Button
-                  variant="outlined"
+                  variant={collected ? "contained" : "outlined"}
                   startIcon={<AddCircleOutlineIcon />}
-                  color="success"
+                  color={collected ? "error" : "success"}
                   sx={{ height: "32px", textTransform: "none" }}
+                  onClick={handleClickAddToCollectionButton}
                 >
                   Collect
                 </Button>
