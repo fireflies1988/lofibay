@@ -26,3 +26,6 @@ export const POST_WITH_AUTH_ADD_OR_REMOVE_PHOTO_TO_OR_FROM_COLLECTION_ENDPOINT_P
 export const POST_WITH_AUTH_RESEND_VERIFICATION_CODE_ENDPOINT_PATH = "api/users/current/resend-verification-code";
 export const POST_WITH_AUTH_VERIFY_YOUR_EMAIL_ENDPOINT_PATH = "api/users/current/verify";
 export const POST_FORGOT_PASSWORD_ENDPOINT_PATH = "api/users/password/forgot";
+export const GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH = "api/admin/photos?state={state}&orderBy={orderBy}&desc={desc}";
+export const GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH = "api/admin/photos/deleted?orderBy={orderBy}&desc={desc}";
+export const PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH = "api/admin/photos/{id}?photoStateId={photoStateId}";

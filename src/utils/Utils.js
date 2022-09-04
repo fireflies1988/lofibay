@@ -14,6 +14,10 @@ export function getUserId() {
   return getAuth()?.userId;
 }
 
+export function getRole() {
+  return getAuth()?.role;
+}
+
 export function saveTokens(accessToken, refreshToken) {
   saveAuth({
     ...getAuth(),

@@ -1,5 +1,5 @@
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import Logout from "@mui/icons-material/Logout";
-import Settings from "@mui/icons-material/Settings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import {
   Avatar,
@@ -34,7 +34,8 @@ function AccountMenu() {
       refreshToken: null,
       userId: null,
       avatarUrl: null,
-      role: null
+      role: null,
+      username: null,
     });
   }
 
@@ -98,6 +99,14 @@ function AccountMenu() {
           </ListItemIcon>
           Account settings
         </MenuItem>
+        {auth?.role === "Admin" && (
+          <MenuItem onClick={() => navigate("admin")}>
+            <ListItemIcon>
+              <AdminPanelSettingsIcon fontSize="small" />
+            </ListItemIcon>
+            Admin dashboard
+          </MenuItem>
+        )}
         <Divider />
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>

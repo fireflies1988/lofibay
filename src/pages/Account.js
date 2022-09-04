@@ -66,20 +66,6 @@ function Account() {
             >
               Delete account
             </Button>
-            {auth?.role === "Admin" && (
-              <Button
-                onClick={() => navigate("admin")}
-                style={{
-                  textTransform: "none",
-                  width: "100%",
-                  justifyContent: "flex-start",
-                }}
-                color="success"
-                variant={lastSegment === "admin" ? "outlined" : "text"}
-              >
-                Admin dashboard
-              </Button>
-            )}
           </Paper>
         </Grid>
         <Grid item xs={9}>

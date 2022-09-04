@@ -1,8 +1,11 @@
 import { useContext } from "react";
 import AuthContext from "../contexts/AuthProvider";
 import {
+  GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH,
+  GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH,
   GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH,
   PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH,
+  PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH,
   POST_REFRESH_TOKEN_ENDPOINT_PATH,
   POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
   SERVER_URL,
@@ -53,6 +56,7 @@ function useFetch() {
           userId: null,
           avatarUrl: null,
           role: null,
+          username: null,
         });
 
         return response;
@@ -158,11 +162,103 @@ function useFetch() {
     }
   }
 
+  async function fetchAdminPhotosAsync(state, orderBy, desc, setData) {
+    try {
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH.replace(
+          "{state}",
+          state
+        )
+          .replace("{orderBy}", orderBy)
+          .replace("{desc}", desc)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        setData(responseData?.data);
+      } else if (response.status === 400) {
+        showSnackbar("error", responseData?.message);
+      } else {
+        showSnackbar("error", "Unknown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
+
+  async function fetchAdminDeletedPhotosAsync(orderBy, desc, setData) {
+    try {
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH.replace(
+          "{orderBy}",
+          orderBy
+        ).replace("{desc}", desc)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        setData(responseData?.data);
+      } else if (response.status === 400) {
+        showSnackbar("error", responseData?.message);
+      } else {
+        showSnackbar("error", "Unknown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
+
+  async function updateAdminPhotoStateAsync(photoId, photoStateId) {
+    try {
+      const response = await fetchWithCredentialsAsync(
+        `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH.replace(
+          "{id}",
+          photoId
+        ).replace("{photoStateId}", photoStateId)}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          redirect: "follow",
+        }
+      );
+      const responseData = await response.json();
+
+      if (response.status === 200) {
+        showSnackbar("success", responseData?.message);
+      } else if (response.status === 400 || response.status === 404 || response.status === 422) {
+        showSnackbar("error", responseData?.message);
+      } else {
+        showSnackbar("error", "Unknown error.");
+      }
+    } catch (err) {
+      showSnackbar("error", err.message);
+    }
+  }
+
   return {
     increaseDownloadsByOneAsync,
     fetchWithCredentialsAsync,
     likeOrUnlikePhotoAsync,
     fetchYourCollectionsAsync,
+    fetchAdminPhotosAsync,
+    fetchAdminDeletedPhotosAsync,
+    updateAdminPhotoStateAsync,
   };
 }
 

@@ -9,16 +9,20 @@ import ChangePassword from "./pages/ChangePassword";
 import Collection from "./pages/Collection";
 import CollectionSlideshow from "./pages/CollectionSlideshow";
 import DeleteAccount from "./pages/DeleteAccount";
+import DeletedPhotos from "./pages/DeletedPhotos";
 import EditProfile from "./pages/EditProfile";
+import FeaturedPhotos from "./pages/FeaturedPhotos";
 import Home from "./pages/Home";
 import Layout from "./pages/Layout";
 import Login from "./pages/Login";
 import PhotoDetails from "./pages/PhotoDetails";
 import Profile from "./pages/Profile";
 import Register from "./pages/Register";
+import RejectedPhotos from "./pages/RejectedPhotos";
 import Upload from "./pages/Upload";
+import UploadedPhotos from "./pages/UploadedPhotos";
 import VerifyEmail from "./pages/VerifyEmail";
-import { getAccessToken, getAuth } from "./utils/Utils";
+import { getAccessToken, getAuth, getRole } from "./utils/Utils";
 
 const theme = {
   colors: {
@@ -30,6 +34,7 @@ const theme = {
 function App() {
   const { auth, setAuth } = useContext(AuthContext);
   const isLoggedIn = useMemo(() => (getAccessToken() ? true : false), [auth]);
+  const isAdmin = useMemo(() => (getRole() === "Admin" ? true : false), [auth]);
 
   useEffect(() => {
     let authData = getAuth();
@@ -60,11 +65,18 @@ function App() {
                   <Route path="password" element={<ChangePassword />} />
                   <Route path="verify" element={<VerifyEmail />} />
                   <Route path="delete" element={<DeleteAccount />} />
-                  <Route path="admin" element={<AdminDashboard />} />
                   <Route path="*" element={<Navigate to="/account" />} />
                 </Route>
                 <Route path="upload" element={<Upload />} />
               </>
+            )}
+            {isLoggedIn && isAdmin && (
+              <Route path="admin" element={<AdminDashboard />}>
+                <Route index element={<UploadedPhotos />} />
+                <Route path="featured-photos" element={<FeaturedPhotos />} />
+                <Route path="rejected-photos" element={<RejectedPhotos />} />
+                <Route path="deleted-photos" element={<DeletedPhotos />} />
+              </Route>
             )}
             <Route path="photos/:photoId" element={<PhotoDetails />} />
             <Route path="collections/:collectionId" element={<Collection />}>

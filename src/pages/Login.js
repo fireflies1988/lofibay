@@ -158,6 +158,7 @@ function Login() {
         }
 
         // save auth to local storage
+        console.log(authData);
         saveAuth(authData);
         setAuth(authData);
       } else if (loginResponse?.status === 401) {
