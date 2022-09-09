@@ -2,10 +2,10 @@ import { Button, TableCell, TableRow } from "@mui/material";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PhotoReviewTable from "../components/PhotoReviewTable";
-import AuthContext from "../contexts/AuthProvider";
-import useFetch from "../hooks/useFetch";
-import { PhotoStates } from "../utils/Constants";
+import PhotoReviewTable from "../../components/PhotoReviewTable";
+import AuthContext from "../../contexts/AuthProvider";
+import useFetch from "../../hooks/useFetch";
+import { PhotoStates } from "../../utils/Constants";
 
 const sortByItems = [
   {

@@ -31,3 +31,5 @@ export const GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH = "api/admin/photos/
 export const PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH = "api/admin/photos/{id}?photoStateId={photoStateId}";
 export const GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH = "api/photos?keywords={keywords}";
 export const GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH = "api/collections?keywords={keywords}";
+export const GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH = "api/users/current/notifications";
+export const PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH = "api/users/current/notifications/mark-as-read";

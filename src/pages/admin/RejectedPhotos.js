@@ -1,11 +1,10 @@
 import { Button, TableCell, TableRow } from "@mui/material";
 import moment from "moment";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PhotoReviewTable from "../components/PhotoReviewTable";
-import AuthContext from "../contexts/AuthProvider";
-import useFetch from "../hooks/useFetch";
-import { PhotoStates } from "../utils/Constants";
+import PhotoReviewTable from "../../components/PhotoReviewTable";
+import useFetch from "../../hooks/useFetch";
+import { PhotoStates } from "../../utils/Constants";
 
 const sortByItems = [
   {
@@ -18,31 +17,25 @@ const sortByItems = [
   },
 ];
 
-function UploadedPhotos() {
-  const { auth } = useContext(AuthContext);
+function RejectedPhotos() {
   const [sortBy, setSortBy] = useState("uploadedat");
   const [desc, setDesc] = useState(false);
-  const [uploadedPhotos, setUploadedPhotos] = useState([]);
   const { fetchAdminPhotosAsync, updateAdminPhotoStateAsync } = useFetch();
+  const [rejectedPhotos, setRejectedPhotos] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAdminPhotosAsync(PhotoStates.NotReviewed, sortBy, desc, setUploadedPhotos);
-  }, [sortBy, desc, auth]);
+    fetchAdminPhotosAsync(PhotoStates.Rejected, sortBy, desc, setRejectedPhotos);
+  }, [sortBy, desc]);
 
   async function handleClickFeature(photoId) {
     await updateAdminPhotoStateAsync(photoId, PhotoStates.Featured);
-    await fetchAdminPhotosAsync(PhotoStates.NotReviewed, sortBy, desc, setUploadedPhotos);
-  }
-
-  async function handleClickReject(photoId) {
-    await updateAdminPhotoStateAsync(photoId, PhotoStates.Rejected);
-    await fetchAdminPhotosAsync(PhotoStates.NotReviewed, sortBy, desc, setUploadedPhotos);
+    await fetchAdminPhotosAsync(PhotoStates.Rejected, sortBy, desc, setRejectedPhotos);
   }
 
   return (
     <>
-      <h2>Uploaded photos</h2>
+      <h2>Rejected photos</h2>
       <PhotoReviewTable
         sortBy={sortBy}
         setSortBy={setSortBy}
@@ -50,10 +43,9 @@ function UploadedPhotos() {
         setDesc={setDesc}
         sortByItems={sortByItems}
       >
-        {uploadedPhotos?.length > 0 &&
-          uploadedPhotos.map((item) => (
+        {rejectedPhotos?.length > 0 &&
+          rejectedPhotos.map((item) => (
             <TableRow
-              key={item?.photoId}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
@@ -87,32 +79,15 @@ function UploadedPhotos() {
               </TableCell>
 
               <TableCell align="right">
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    flexDirection: "column",
-                  }}
+                <Button
+                  variant="outlined"
+                  color="success"
+                  sx={{ textTransform: "none", ml: "0.5rem" }}
+                  size="small"
+                  onClick={() => handleClickFeature(item?.photoId)}
                 >
-                  <Button
-                    variant="outlined"
-                    color="success"
-                    sx={{ textTransform: "none" }}
-                    size="small"
-                    onClick={() => handleClickFeature(item?.photoId)}
-                  >
-                    Feature
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    sx={{ textTransform: "none" }}
-                    size="small"
-                    onClick={() => handleClickReject(item?.photoId)}
-                  >
-                    Reject
-                  </Button>
-                </div>
+                  Feature
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -121,4 +96,4 @@ function UploadedPhotos() {
   );
 }
 
-export default UploadedPhotos;
+export default RejectedPhotos;

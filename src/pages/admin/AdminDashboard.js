@@ -1,7 +1,7 @@
 import { Button, Container, Grid, Paper } from "@mui/material";
 import React, { useContext } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import AuthContext from "../contexts/AuthProvider";
+import AuthContext from "../../contexts/AuthProvider";
 
 function AdminDashboard() {
   const { auth } = useContext(AuthContext);
