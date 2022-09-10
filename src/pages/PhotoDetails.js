@@ -29,11 +29,14 @@ import ColorBar from "react-color-bar";
 import { useNavigate, useParams } from "react-router-dom";
 import AddToCollectionDialog from "../components/AddToCollectionDialog";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
+import DonationDialog from "../components/DonationDialog";
 import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../contexts/AuthProvider";
-import YourCollectionsContext, { YourCollectionsProvider } from "../contexts/YourCollectionsProvider";
+import YourCollectionsContext, {
+  YourCollectionsProvider,
+} from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
@@ -42,7 +45,10 @@ import {
   PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
   SERVER_URL,
 } from "../utils/Endpoints";
-import { isThisPhotoAlreadyInOneOfYourCollection, youLikedThisPhoto } from "../utils/Utils";
+import {
+  isThisPhotoAlreadyInOneOfYourCollection,
+  youLikedThisPhoto,
+} from "../utils/Utils";
 
 function bytesToSize(bytes) {
   var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -81,6 +87,7 @@ function PhotoDetails() {
     increaseDownloadsByOneAsync,
     likeOrUnlikePhotoAsync,
   } = useFetch();
+  const [donationDialogOpened, setDonationDialogOpened] = useState(false);
 
   useEffect(() => {
     fetchPhotoDetailsByIdAsync(photoId);
@@ -279,32 +286,55 @@ function PhotoDetails() {
                 width: "100%",
               }}
             >
-              <LinkStyles
-                component="div"
-                onClick={() =>
-                  navigate(`/profiles/${rawPhotoInfo?.user.userId}`)
-                }
-                style={{
-                  fontWeight: "normal",
-                  display: "flex",
-                  gap: "10px",
-                  alignItems: "center",
-                  cursor: "pointer",
-                }}
-              >
-                <Avatar
-                  alt={rawPhotoInfo?.user?.username}
-                  src={rawPhotoInfo?.user?.avatarUrl}
-                  sx={{ width: 45, height: 45 }}
-                />
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  <div>
-                    {rawPhotoInfo?.user?.firstName}{" "}
-                    {rawPhotoInfo?.user?.lastName}
+              <div style={{ display: "flex", alignItems: "center", gap: "1rem"}}>
+                <LinkStyles
+                  component="div"
+                  onClick={() =>
+                    navigate(`/profiles/${rawPhotoInfo?.user.userId}`)
+                  }
+                  style={{
+                    fontWeight: "normal",
+                    display: "flex",
+                    gap: "10px",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Avatar
+                    alt={rawPhotoInfo?.user?.username}
+                    src={rawPhotoInfo?.user?.avatarUrl}
+                    sx={{ width: 45, height: 45 }}
+                  />
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <div>
+                      {rawPhotoInfo?.user?.firstName}{" "}
+                      {rawPhotoInfo?.user?.lastName}
+                    </div>
+                    <div>@{rawPhotoInfo?.user?.username}</div>
                   </div>
-                  <div>@{rawPhotoInfo?.user?.username}</div>
-                </div>
-              </LinkStyles>
+                </LinkStyles>
+                {(rawPhotoInfo?.user?.momoQRCode ||
+                  rawPhotoInfo?.user?.bankQRCode ||
+                  rawPhotoInfo?.user?.paypalDonationLink) && (
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    size="small"
+                    sx={{ textTransform: "none" }}
+                    onClick={() => setDonationDialogOpened(true)}
+                  >
+                    Donate
+                  </Button>
+                )}
+                <DonationDialog
+                  open={donationDialogOpened}
+                  onClose={() => setDonationDialogOpened(false)}
+                  momoQRCode={rawPhotoInfo?.user?.momoQRCode}
+                  bankQRCode={rawPhotoInfo?.user?.bankQRCode}
+                  paypalDonationLink={rawPhotoInfo?.user?.paypalDonationLink}
+                />
+              </div>
+
               <div
                 style={{ display: "flex", gap: "10px", alignItems: "center" }}
               >

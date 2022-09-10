@@ -4,13 +4,27 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PhotoIcon from "@mui/icons-material/Photo";
 import { TabContext, TabPanel } from "@mui/lab";
-import { Avatar, Button, Grid, Tab, Tabs } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  Tab,
+  Tabs,
+  TextField,
+} from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import CollectionGallery from "../components/CollectionGallery";
+import DonationDialog from "../components/DonationDialog";
 import ImageGallery from "../components/ImageGallery";
+import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
@@ -19,7 +33,8 @@ import {
   GET_USER_COLLECTIONS_ENDPOINT_PATH,
   GET_USER_INFO_BY_ID_ENDPOINT_PATH,
   GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH,
-  GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH, SERVER_URL
+  GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
+  SERVER_URL,
 } from "../utils/Endpoints";
 import { getUserId } from "../utils/Utils";
 
@@ -42,6 +57,7 @@ function Profile() {
   const { showSnackbar } = useNotistack();
   const [loading, setLoading] = useState(true);
   const { fetchWithCredentialsAsync, fetchYourCollectionsAsync } = useFetch();
+  const [open, setOpen] = useState(false);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -235,6 +251,26 @@ function Profile() {
                   Edit profile
                 </Button>
               )}
+              {(userInfo?.momoQRCode ||
+                userInfo?.bankQRCode ||
+                userInfo?.paypalDonationLink) && (
+                <Button
+                  variant="outlined"
+                  color="success"
+                  size="small"
+                  sx={{ textTransform: "none" }}
+                  onClick={() => setOpen(true)}
+                >
+                  Donate
+                </Button>
+              )}
+              <DonationDialog
+                open={open}
+                onClose={() => setOpen(false)}
+                momoQRCode={userInfo?.momoQRCode}
+                bankQRCode={userInfo?.bankQRCode}
+                paypalDonationLink={userInfo?.paypalDonationLink}
+              />
             </div>
 
             <div style={{ fontSize: "16px", marginTop: "1rem" }}>

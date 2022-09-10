@@ -25,6 +25,7 @@ import Upload from "./pages/Upload";
 import UploadedPhotos from "./pages/admin/UploadedPhotos";
 import VerifyEmail from "./pages/VerifyEmail";
 import { getAccessToken, getAuth, getRole } from "./utils/Utils";
+import Payments from "./pages/Payments";
 
 const theme = {
   colors: {
@@ -67,6 +68,7 @@ function App() {
                   <Route index element={<EditProfile />} />
                   <Route path="password" element={<ChangePassword />} />
                   <Route path="verify" element={<VerifyEmail />} />
+                  <Route path="payments" element={<Payments />} />
                   <Route path="delete" element={<DeleteAccount />} />
                   <Route path="*" element={<Navigate to="/account" />} />
                 </Route>

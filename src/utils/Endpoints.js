@@ -33,3 +33,4 @@ export const GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH = "api/photos?keywords={
 export const GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH = "api/collections?keywords={keywords}";
 export const GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH = "api/users/current/notifications";
 export const PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH = "api/users/current/notifications/mark-as-read";
+export const PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH = "api/users/current/payments";

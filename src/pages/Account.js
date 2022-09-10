@@ -55,6 +55,18 @@ function Account() {
               Verify your email
             </Button>
             <Button
+              onClick={() => navigate("payments")}
+              style={{
+                textTransform: "none",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+              color="success"
+              variant={lastSegment === "payments" ? "outlined" : "text"}
+            >
+              Donation settings
+            </Button>
+            <Button
               onClick={() => navigate("delete")}
               style={{
                 textTransform: "none",
