@@ -8,6 +8,7 @@ import {
   IconButton,
   ImageListItem,
   ImageListItemBar,
+  Tooltip,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ import AuthContext from "../contexts/AuthProvider";
 import YourCollectionsContext from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
+import StarIcon from "@mui/icons-material/Star";
 import {
   isThisPhotoAlreadyInOneOfYourCollection,
   youLikedThisPhoto,
@@ -70,6 +72,14 @@ function ImageItem({ item }) {
           position="top"
           actionIcon={
             <>
+              {item?.photoStateId === 2 && (
+                <Tooltip title="Featured">
+                  <IconButton>
+                    <StarIcon sx={{ color: "yellow" }} />
+                  </IconButton>
+                </Tooltip>
+              )}
+
               <IconButton
                 sx={{ color: "rgba(255, 255, 255, 0.8)" }}
                 aria-label={`star ${item.title}`}

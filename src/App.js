@@ -10,7 +10,7 @@ import ChangePassword from "./pages/ChangePassword";
 import Collection from "./pages/Collection";
 import CollectionSlideshow from "./pages/CollectionSlideshow";
 import DeleteAccount from "./pages/DeleteAccount";
-import DeletedPhotos from "./pages/DeletedPhotos";
+import DeletedPhotos from "./pages/admin/DeletedPhotos";
 import EditProfile from "./pages/EditProfile";
 import FeaturedPhotos from "./pages/admin/FeaturedPhotos";
 import Home from "./pages/Home";
@@ -26,6 +26,7 @@ import UploadedPhotos from "./pages/admin/UploadedPhotos";
 import VerifyEmail from "./pages/VerifyEmail";
 import { getAccessToken, getAuth, getRole } from "./utils/Utils";
 import Payments from "./pages/Payments";
+import Tags from "./pages/admin/Tags";
 
 const theme = {
   colors: {
@@ -81,6 +82,7 @@ function App() {
                 <Route path="featured-photos" element={<FeaturedPhotos />} />
                 <Route path="rejected-photos" element={<RejectedPhotos />} />
                 <Route path="deleted-photos" element={<DeletedPhotos />} />
+                <Route path="tags" element={<Tags />} />
               </Route>
             )}
             <Route

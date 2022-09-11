@@ -65,6 +65,18 @@ function AdminDashboard() {
             >
               Deleted photos
             </Button>
+            <Button
+              onClick={() => navigate("tags")}
+              style={{
+                textTransform: "none",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+              color="success"
+              variant={lastSegment === "tags" ? "outlined" : "text"}
+            >
+              Tags
+            </Button>
           </Paper>
         </Grid>
         <Grid item xs={9}>

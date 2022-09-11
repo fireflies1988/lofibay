@@ -1,9 +1,9 @@
 import { Button, TableCell, TableRow } from "@mui/material";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
-import PhotoReviewTable from "../components/PhotoReviewTable";
-import AuthContext from "../contexts/AuthProvider";
-import useFetch from "../hooks/useFetch";
+import PhotoReviewTable from "../../components/PhotoReviewTable";
+import AuthContext from "../../contexts/AuthProvider";
+import useFetch from "../../hooks/useFetch";
 
 const sortByItems = [
   {

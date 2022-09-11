@@ -34,3 +34,5 @@ export const GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH = "api/collections?
 export const GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH = "api/users/current/notifications";
 export const PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH = "api/users/current/notifications/mark-as-read";
 export const PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH = "api/users/current/payments";
+export const GET_WITH_AUTH_TAGS_ENDPOINT_PATH = "api/admin/tags?keyword={keyword}&bad={bad}";
+export const DELETE_WITH_AUTH_TAG_BY_NAME_ENDPOINT_PATH = "api/admin/tags/{name}";
