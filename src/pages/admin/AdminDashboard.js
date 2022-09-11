@@ -14,7 +14,7 @@ function AdminDashboard() {
   return (
     <Container maxWidth="xl" sx={{ marginTop: "1.5rem" }}>
       <Grid container spacing={3}>
-        <Grid item xs={3}>
+        <Grid item xs={2}>
           <h2>Admin dashboard</h2>
           <Paper variant="outlined" sx={{ padding: "0.5rem" }}>
             <Button
@@ -77,9 +77,21 @@ function AdminDashboard() {
             >
               Tags
             </Button>
+            <Button
+              onClick={() => navigate("statistics ")}
+              style={{
+                textTransform: "none",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+              color="success"
+              variant={lastSegment === "statistics" ? "outlined" : "text"}
+            >
+              Statistics
+            </Button>
           </Paper>
         </Grid>
-        <Grid item xs={9}>
+        <Grid item xs={10}>
           <Outlet />
         </Grid>
       </Grid>

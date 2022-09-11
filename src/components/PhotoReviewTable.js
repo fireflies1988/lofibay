@@ -101,7 +101,7 @@ function PhotoReviewTable({
             </TableRow>
           </TableHead>
           <TableBody>{children}</TableBody>
-          <TableFooter>
+          {/* <TableFooter>
             <TableRow>
               <TablePagination
                 rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
@@ -119,7 +119,7 @@ function PhotoReviewTable({
                 onRowsPerPageChange={handleChangeRowsPerPage}
               />
             </TableRow>
-          </TableFooter>
+          </TableFooter> */}
         </Table>
       </TableContainer>
     </Paper>

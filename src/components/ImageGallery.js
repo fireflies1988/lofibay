@@ -14,7 +14,7 @@ function ImageGallery({ photos }) {
             ))}
         </ImageList>
 
-        <Pagination
+        {/* <Pagination
           style={{
             display: "flex",
             justifyContent: "center",
@@ -23,7 +23,7 @@ function ImageGallery({ photos }) {
           count={10}
           variant="outlined"
           color="secondary"
-        />
+        /> */}
       </Container>
     </YourCollectionsProvider>
   );

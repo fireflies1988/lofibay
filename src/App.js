@@ -27,6 +27,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import { getAccessToken, getAuth, getRole } from "./utils/Utils";
 import Payments from "./pages/Payments";
 import Tags from "./pages/admin/Tags";
+import Statistics from "./pages/admin/Statistics";
 
 const theme = {
   colors: {
@@ -83,6 +84,7 @@ function App() {
                 <Route path="rejected-photos" element={<RejectedPhotos />} />
                 <Route path="deleted-photos" element={<DeletedPhotos />} />
                 <Route path="tags" element={<Tags />} />
+                <Route path="statistics" element={<Statistics />} />
               </Route>
             )}
             <Route
