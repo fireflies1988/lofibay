@@ -8,7 +8,7 @@ export const PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH = "api/users/current/
 export const GET_USER_INFO_BY_ID_ENDPOINT_PATH = "api/users/{id}";
 export const POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH = "api/photos";
 export const GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH = "api/users/{id}/photos";
-export const GET_ALL_PHOTOS_ENDPOINT_PATH = "api/photos";
+export const GET_ALL_PHOTOS_ENDPOINT_PATH = "api/photos?orientation=any&color=any&sortBy=relevance";
 export const GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH = "api/photos/{id}";
 export const GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH = "api/users/{id}/liked-photos";
 export const POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH = "api/photos/{id}/like-or-unlike";
@@ -29,7 +29,7 @@ export const POST_FORGOT_PASSWORD_ENDPOINT_PATH = "api/users/password/forgot";
 export const GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH = "api/admin/photos?state={state}&orderBy={orderBy}&desc={desc}";
 export const GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH = "api/admin/photos/deleted?orderBy={orderBy}&desc={desc}";
 export const PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH = "api/admin/photos/{id}?photoStateId={photoStateId}";
-export const GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH = "api/photos?keywords={keywords}";
+export const GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH = "api/photos?keywords={keywords}&orientation={orientation}&color={color}&sortBy={sortBy}";
 export const GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH = "api/collections?keywords={keywords}";
 export const GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH = "api/users/current/notifications";
 export const PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH = "api/users/current/notifications/mark-as-read";
@@ -37,3 +37,4 @@ export const PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH = "api/users/curr
 export const GET_WITH_AUTH_TAGS_ENDPOINT_PATH = "api/admin/tags?keyword={keyword}&bad={bad}";
 export const DELETE_WITH_AUTH_TAG_BY_NAME_ENDPOINT_PATH = "api/admin/tags/{name}";
 export const GET_WITH_AUTH_STATS_ENDPOINT_PATH = "api/admin/stats";
+export const GET_ALL_COLORS_ENPOINT_PATH = "api/colors";

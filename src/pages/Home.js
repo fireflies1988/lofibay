@@ -34,7 +34,7 @@ function Home() {
       if (response.status === 200) {
         setPhotos(responseData?.data);
       } else {
-        showSnackbar("error", responseData?.message);
+        showSnackbar("error", "Unkown error.");
       }
     } catch (err) {
       showSnackbar("error", err.message);

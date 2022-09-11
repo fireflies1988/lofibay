@@ -9,7 +9,7 @@ function CollectionGallery({ collections }) {
         {collections?.length > 0 && collections.map((item) => <CollectionItem key={item?.collectionId} item={item} />)}
       </div>
 
-      <Pagination
+      {/* <Pagination
         style={{
           display: "flex",
           justifyContent: "center",
@@ -18,7 +18,7 @@ function CollectionGallery({ collections }) {
         count={10}
         variant="outlined"
         color="secondary"
-      />
+      /> */}
     </>
   );
 }
