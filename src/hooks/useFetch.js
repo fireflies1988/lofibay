@@ -7,16 +7,16 @@ import {
   PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH,
   PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH,
   POST_REFRESH_TOKEN_ENDPOINT_PATH,
-  POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH,
-  SERVER_URL,
+  POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH
 } from "../utils/Endpoints";
 import {
   getAccessToken,
   getAuth,
   getRefreshToken,
   getUserId,
+  headers,
   removeAuth,
-  saveTokens,
+  saveTokens
 } from "../utils/Utils";
 import useNotistack from "./useNotistack";
 
@@ -27,17 +27,20 @@ function useFetch() {
   async function fetchWithCredentialsAsync(url, requestOptions) {
     requestOptions.headers = requestOptions.headers || {};
     requestOptions.headers.Authorization = `bearer ${getAccessToken()}`;
+    if (process.env.REACT_APP_ENVIRONMENT === "staging") {
+      requestOptions.headers["X-Api-Key"] = process.env.REACT_APP_API_KEY;
+    }
     const response = await fetch(url, requestOptions);
 
     if (response?.status === 401 && response.headers.has("Token-Expired")) {
       // access token is expired, call refresh token
       const refreshTokenResponse = await fetch(
-        `${SERVER_URL}${POST_REFRESH_TOKEN_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${POST_REFRESH_TOKEN_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           body: JSON.stringify({
             userId: getUserId(),
             refreshToken: getRefreshToken(),
@@ -80,15 +83,15 @@ function useFetch() {
   async function increaseDownloadsByOneAsync(photoId) {
     try {
       const response = await fetch(
-        `${SERVER_URL}${PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_INCREASE_DOWNLOADS_BY_ONE_ENPOINT_PATH.replace(
           "{id}",
           `${photoId}`
         )}`,
         {
           method: "PATCH",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -113,13 +116,13 @@ function useFetch() {
     try {
       const requestOptions = {
         method: "POST",
-        headers: {
+        headers: headers({
           "Content-Type": "application/json",
-        },
+        }),
         redirect: "follow",
       };
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_LIKE_OR_UNLIKE_PHOTO_ENDPOINT_PATH.replace(
           "{id}",
           `${photoId}`
         )}`,
@@ -141,12 +144,12 @@ function useFetch() {
   async function fetchYourCollectionsAsync(setData) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -165,7 +168,7 @@ function useFetch() {
   async function fetchAdminPhotosAsync(state, orderBy, desc, setData) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_GET_PHOTOS_ENDPOINT_PATH.replace(
           "{state}",
           state
         )
@@ -173,9 +176,9 @@ function useFetch() {
           .replace("{desc}", desc)}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -196,15 +199,15 @@ function useFetch() {
   async function fetchAdminDeletedPhotosAsync(orderBy, desc, setData) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_GET_DELETED_PHOTOS_ENDPOINT_PATH.replace(
           "{orderBy}",
           orderBy
         ).replace("{desc}", desc)}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -225,15 +228,15 @@ function useFetch() {
   async function updateAdminPhotoStateAsync(photoId, photoStateId) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_UPDATE_PHOTO_STATE_ENDPOINT_PATH.replace(
           "{id}",
           photoId
         ).replace("{photoStateId}", photoStateId)}`,
         {
           method: "PATCH",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

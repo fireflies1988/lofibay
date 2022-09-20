@@ -1,11 +1,12 @@
 import { Container } from "@mui/system";
 import React, { useEffect, useState } from "react";
+import CircularProgressWithText from "../components/CircularProgressWithText";
 import Header from "../components/Header";
 import ImageGallery from "../components/ImageGallery";
 import { HomeStyles } from "../components/styles/Home.styled";
-import { GET_ALL_PHOTOS_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
-import CircularProgressWithText from "../components/CircularProgressWithText";
 import useNotistack from "../hooks/useNotistack";
+import { GET_ALL_PHOTOS_ENDPOINT_PATH } from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 
 function Home() {
   const [photos, setPhotos] = useState([]);
@@ -20,12 +21,12 @@ function Home() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_ALL_PHOTOS_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_ALL_PHOTOS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

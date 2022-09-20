@@ -13,7 +13,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import CircularProgressWithText from "../../components/CircularProgressWithText";
@@ -21,9 +21,9 @@ import useFetch from "../../hooks/useFetch";
 import useNotistack from "../../hooks/useNotistack";
 import {
   DELETE_WITH_AUTH_TAG_BY_NAME_ENDPOINT_PATH,
-  GET_WITH_AUTH_TAGS_ENDPOINT_PATH,
-  SERVER_URL,
+  GET_WITH_AUTH_TAGS_ENDPOINT_PATH
 } from "../../utils/Endpoints";
+import { headers } from "../../utils/Utils";
 
 function Tags() {
   const { fetchWithCredentialsAsync } = useFetch();
@@ -41,15 +41,15 @@ function Tags() {
     setLoading(true);
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_TAGS_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_TAGS_ENDPOINT_PATH.replace(
           "{keyword}",
           keyword
         ).replace("{bad}", bad)}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -69,15 +69,15 @@ function Tags() {
   async function removeTagAsync(name) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${DELETE_WITH_AUTH_TAG_BY_NAME_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${DELETE_WITH_AUTH_TAG_BY_NAME_ENDPOINT_PATH.replace(
           "{name}",
           name
         )}`,
         {
           method: "DELETE",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

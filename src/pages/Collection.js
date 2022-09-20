@@ -1,21 +1,19 @@
 import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock";
+import PausePresentationIcon from "@mui/icons-material/PausePresentation";
 import SaveIcon from "@mui/icons-material/Save";
+import SlideshowIcon from "@mui/icons-material/Slideshow";
 import {
   Avatar,
-  Button,
-  Checkbox,
-  Dialog,
+  Button, Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  FormControlLabel,
-  FormGroup,
-  TextField,
+  DialogTitle, TextField
 } from "@mui/material";
 import { Container } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import CheckboxLabel from "../components/CheckboxLabel";
 import CircularProgressWithText from "../components/CircularProgressWithText";
 import ConfirmDeleteDialog from "../components/ConfirmDeleteDialog";
 import ImageGallery from "../components/ImageGallery";
@@ -23,17 +21,13 @@ import { CollectionHeader } from "../components/styles/Collection.styled";
 import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
-import SlideshowIcon from "@mui/icons-material/Slideshow";
-import PausePresentationIcon from "@mui/icons-material/PausePresentation";
 import {
   DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH,
   GET_COLLECTION_INFO_ENPOINT_PATH,
   GET_PHOTOS_OF_COLLECTION_ENDPOINT_PATH,
-  PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH,
-  SERVER_URL,
+  PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH
 } from "../utils/Endpoints";
-import { getAccessToken, getUserId } from "../utils/Utils";
-import CheckboxLabel from "../components/CheckboxLabel";
+import { getAccessToken, getUserId, headers } from "../utils/Utils";
 
 function Collection() {
   const { auth, setAuth } = useContext(AuthContext);
@@ -88,15 +82,15 @@ function Collection() {
   async function fetchCollectionInfoAsync(collectionId) {
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_COLLECTION_INFO_ENPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_COLLECTION_INFO_ENPOINT_PATH.replace(
           "{id}",
           `${collectionId}`
         )}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -131,15 +125,15 @@ function Collection() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_PHOTOS_OF_COLLECTION_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_PHOTOS_OF_COLLECTION_ENDPOINT_PATH.replace(
           "{id}",
           `${collectionId}`
         )}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -161,15 +155,15 @@ function Collection() {
   async function updateCollectionAsync(collectionId) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_UPDATE_COLLECTION_BY_ID_ENDPOINT_PATH.replace(
           "{id}",
           `${collectionId}`
         )}`,
         {
           method: "PATCH",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
           body: JSON.stringify({
             ...inputs,
@@ -202,15 +196,15 @@ function Collection() {
   async function deleteCollectionAsync(collectionId) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${DELETE_WITH_AUTH_COLLECTION_BY_ID_ENDPOINT_PATH.replace(
           "{id}",
           `${collectionId}`
         )}`,
         {
           method: "DELETE",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

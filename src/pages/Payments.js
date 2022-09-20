@@ -1,3 +1,4 @@
+import SaveIcon from '@mui/icons-material/Save';
 import UploadIcon from "@mui/icons-material/Upload";
 import { LoadingButton, TabContext, TabPanel } from "@mui/lab";
 import { Button, IconButton, Paper, Tab, Tabs, TextField } from "@mui/material";
@@ -5,12 +6,11 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
-import SaveIcon from '@mui/icons-material/Save';
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
-  PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH,
-  SERVER_URL,
+  PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH
 } from "../utils/Endpoints";
+import { headers } from '../utils/Utils';
 
 function Payments() {
   const [value, setValue] = useState("1");
@@ -68,12 +68,12 @@ function Payments() {
   async function fetchUserInfoAsync() {
     try {
       const userInfoResponse = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -109,10 +109,11 @@ function Payments() {
       formData.append("PaypalDonationLink", uploadData.paypalDonationLink);
 
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_UPDATE_PAYMENT_INFO_ENDPOINT_PATH}`,
         {
           method: "PATCH",
           body: formData,
+          headers: headers({}),
           redirect: "follow",
         }
       );

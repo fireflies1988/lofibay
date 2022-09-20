@@ -8,9 +8,9 @@ import YourCollectionsContext from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
-  POST_WITH_AUTH_ADD_OR_REMOVE_PHOTO_TO_OR_FROM_COLLECTION_ENDPOINT_PATH,
-  SERVER_URL,
+  POST_WITH_AUTH_ADD_OR_REMOVE_PHOTO_TO_OR_FROM_COLLECTION_ENDPOINT_PATH
 } from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 import { StyledCollectionCard } from "./styles/Collection.styled";
 
 function CollectionCard({ collection, photoId }) {
@@ -37,15 +37,15 @@ function CollectionCard({ collection, photoId }) {
   ) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_ADD_OR_REMOVE_PHOTO_TO_OR_FROM_COLLECTION_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_ADD_OR_REMOVE_PHOTO_TO_OR_FROM_COLLECTION_ENDPOINT_PATH.replace(
           "{id}",
           `${collectionId}`
         ).replace("{photoId}", `${photoId}`)}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

@@ -1,16 +1,16 @@
 import UploadIcon from "@mui/icons-material/Upload";
+import LoadingButton from "@mui/lab/LoadingButton";
 import { Alert, Box, Button, Grid, IconButton, TextField } from "@mui/material";
 import { Container } from "@mui/system";
 import React, { useContext, useState } from "react";
-import { LinkStyles } from "../components/styles/Link.styled";
-import LoadingButton from "@mui/lab/LoadingButton";
 import { TagsInput } from "react-tag-input-component";
-import {
-  POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH,
-  SERVER_URL,
-} from "../utils/Endpoints";
+import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
+import {
+  POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH
+} from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 
 const initialUploadData = {
   previewImageUrl: "",
@@ -64,11 +64,12 @@ function Upload() {
         const requestOptions = {
           method: "POST",
           body: formData,
+          headers: headers({}),
           redirect: "follow",
         };
 
         const uploadPhotoResponse = await fetchWithCredentialsAsync(
-          `${SERVER_URL}${POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH}`,
+          `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_UPLOAD_PHOTO_ENDPOINT_PATH}`,
           requestOptions
         );
         const uploadPhotoResponseData = await uploadPhotoResponse.json();

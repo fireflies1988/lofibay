@@ -17,11 +17,11 @@ import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
-  PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH,
-  SERVER_URL
+  PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH
 } from "../utils/Endpoints";
 import {
   getAccessToken,
+  headers,
   saveAvatarUrl
 } from "../utils/Utils";
 
@@ -118,13 +118,13 @@ function EditProfile() {
     try {
       const requestOptions = {
         method: "GET",
-        headers: {
+        headers: headers({
           "Content-Type": "application/json",
-        },
+        }),
         redirect: "follow",
       };
       const userInfoResponse = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
         requestOptions
       );
       const userInfoResponseData = await userInfoResponse.json();
@@ -198,11 +198,12 @@ function EditProfile() {
       const requestOptions = {
         method: "PATCH",
         body: formData,
+        headers: headers({}),
         redirect: "follow",
       };
 
       const updateUserInfoResponse = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_UPDATE_USER_ENDPOINT_PATH}`,
         requestOptions
       );
       const updateUserInfoResponseData = await updateUserInfoResponse.json();

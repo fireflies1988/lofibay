@@ -1,13 +1,14 @@
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import { Alert, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Alert, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { LoginContainer } from "../components/styles/Login.styled";
 import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
-import { POST_SIGNUP_ENDPOINT_PATH, SERVER_URL } from "../utils/Endpoints";
+import { LoginContainer } from "../components/styles/Login.styled";
 import useNotistack from "../hooks/useNotistack";
+import { POST_SIGNUP_ENDPOINT_PATH } from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 
 const initialErrors = {
   emailErrorText: "",
@@ -56,11 +57,11 @@ function Register() {
     }));
 
     try {
-      const signUpResponse = await fetch(`${SERVER_URL}${POST_SIGNUP_ENDPOINT_PATH}`, {
+      const signUpResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}${POST_SIGNUP_ENDPOINT_PATH}`, {
         method: "POST",
-        headers: {
+        headers: headers({
           "Content-Type": "application/json"
-        },
+        }),
         body: JSON.stringify({
           email: inputs.email,
           username: inputs.username,

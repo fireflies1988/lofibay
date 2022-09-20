@@ -62,3 +62,10 @@ export function isThisPhotoAlreadyInOneOfYourCollection(photoId, yourCollections
   }
   return false;
 }
+
+export function headers(current) {
+  if (process.env.REACT_APP_ENVIRONMENT === "staging") {
+    current["X-Api-Key"] = process.env.REACT_APP_API_KEY;
+  }
+  return current;
+}

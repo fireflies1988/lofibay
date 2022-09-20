@@ -1,4 +1,3 @@
-export const SERVER_URL = "https://localhost:7039/";
 export const POST_LOGIN_ENDPOINT_PATH = "api/users/login";
 export const POST_SIGNUP_ENDPOINT_PATH = "api/users/signup";
 export const GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH = "api/users/current";
@@ -38,3 +37,4 @@ export const GET_WITH_AUTH_TAGS_ENDPOINT_PATH = "api/admin/tags?keyword={keyword
 export const DELETE_WITH_AUTH_TAG_BY_NAME_ENDPOINT_PATH = "api/admin/tags/{name}";
 export const GET_WITH_AUTH_STATS_ENDPOINT_PATH = "api/admin/stats";
 export const GET_ALL_COLORS_ENPOINT_PATH = "api/colors";
+export const DELETE_WITH_AUTH_SOFT_DELETE_ACCOUNT_ENPOINT_PATH = "api/users/current/soft";

@@ -17,9 +17,9 @@ import StyledFormHelperErrorText from "../components/StyledFormHelperErrorText";
 import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import {
-  PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH,
-  SERVER_URL
+  PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH
 } from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 
 const initialMessages = {
   currentPasswordErrorText: "",
@@ -94,9 +94,9 @@ function ChangePassword() {
     try {
       const requestOptions = {
         method: "PATCH",
-        headers: {
+        headers: headers({
           "Content-Type": "application/json",
-        },
+        }),
         body: JSON.stringify({
           currentPassword: inputs.currentPassword,
           newPassword: inputs.newPassword,
@@ -106,7 +106,7 @@ function ChangePassword() {
       };
 
       const changePasswordResponse = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_CHANGE_PASSWORD_ENDPOINT_PATH}`,
         requestOptions
       );
       const changePasswordResponseData = await changePasswordResponse.json();

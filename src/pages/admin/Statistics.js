@@ -1,15 +1,13 @@
 import { Card, CardContent, Grid, Paper } from "@mui/material";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import useFetch from "../../hooks/useFetch";
 import useNotistack from "../../hooks/useNotistack";
 import {
-  GET_WITH_AUTH_STATS_ENDPOINT_PATH,
-  SERVER_URL,
+  GET_WITH_AUTH_STATS_ENDPOINT_PATH
 } from "../../utils/Endpoints";
+import { headers } from "../../utils/Utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -27,12 +25,12 @@ function Statistics() {
   async function fetchStatsAsync() {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_STATS_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_STATS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

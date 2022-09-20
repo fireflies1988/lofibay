@@ -17,7 +17,7 @@ import {
   Grid,
   Paper,
   TextField,
-  Typography,
+  Typography
 } from "@mui/material";
 import { Container } from "@mui/system";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -34,20 +34,18 @@ import FixTags from "../components/FixTags";
 import ImageEditorDialog from "../components/ImageEditorDialog";
 import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../contexts/AuthProvider";
-import YourCollectionsContext, {
-  YourCollectionsProvider,
-} from "../contexts/YourCollectionsProvider";
+import YourCollectionsContext from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
   DELETE_WITH_AUTH_SOFT_DELETE_PHOTO_ENPOINT_PATH,
   GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH,
-  PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH,
-  SERVER_URL,
+  PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH
 } from "../utils/Endpoints";
 import {
+  headers,
   isThisPhotoAlreadyInOneOfYourCollection,
-  youLikedThisPhoto,
+  youLikedThisPhoto
 } from "../utils/Utils";
 
 function bytesToSize(bytes) {
@@ -111,15 +109,15 @@ function PhotoDetails() {
   async function fetchPhotoDetailsByIdAsync(photoId) {
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_PHOTO_DETAILS_BY_ID_ENDPOINT_PATH.replace(
           "{id}",
           `${photoId}`
         )}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -172,9 +170,9 @@ function PhotoDetails() {
     try {
       const requestOptions = {
         method: "PUT",
-        headers: {
+        headers: headers({
           "Content-Type": "application/json",
-        },
+        }),
         redirect: "follow",
         body: JSON.stringify({
           ...inputs,
@@ -182,7 +180,7 @@ function PhotoDetails() {
         }),
       };
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${PUT_WITH_AUTH_UPDATE_PHOTO_INFO_ENDPOINT_PATH.replace(
           "{id}",
           `${rawPhotoInfo?.photoId}`
         )}`,
@@ -210,13 +208,13 @@ function PhotoDetails() {
     try {
       const requestOptions = {
         method: "DELETE",
-        headers: {
+        headers: headers({
           "Content-Type": "application/json",
-        },
+        }),
         redirect: "follow",
       };
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${DELETE_WITH_AUTH_SOFT_DELETE_PHOTO_ENPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${DELETE_WITH_AUTH_SOFT_DELETE_PHOTO_ENPOINT_PATH.replace(
           "{id}",
           `${rawPhotoInfo?.photoId}`
         )}`,

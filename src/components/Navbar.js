@@ -7,9 +7,9 @@ import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
   GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH,
-  PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH,
-  SERVER_URL
+  PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH
 } from "../utils/Endpoints";
+import { getAccessToken, headers } from "../utils/Utils";
 import AccountMenu from "./AccountMenu";
 import NotificationItem from "./NotificationItem";
 import SearchBar from "./SearchBar";
@@ -38,7 +38,9 @@ function Navbar() {
   const id = open ? "simple-popover" : undefined;
 
   useEffect(() => {
-    fetchNotificationsAsync();
+    if (getAccessToken()) {
+      fetchNotificationsAsync();
+    }
   }, []);
 
   useEffect(() => {
@@ -48,12 +50,12 @@ function Navbar() {
   async function fetchNotificationsAsync() {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -72,12 +74,12 @@ function Navbar() {
   async function markNotificationAsReadAsync() {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH}`,
         {
           method: "PATCH",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

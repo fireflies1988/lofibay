@@ -5,9 +5,9 @@ import useNotistack from "../hooks/useNotistack";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   POST_WITH_AUTH_RESEND_VERIFICATION_CODE_ENDPOINT_PATH,
-  POST_WITH_AUTH_VERIFY_YOUR_EMAIL_ENDPOINT_PATH,
-  SERVER_URL,
+  POST_WITH_AUTH_VERIFY_YOUR_EMAIL_ENDPOINT_PATH
 } from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 
 function VerifyEmail() {
   const { showSnackbar } = useNotistack();
@@ -22,12 +22,12 @@ function VerifyEmail() {
   async function resendVerificationCodeAsync() {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_RESEND_VERIFICATION_CODE_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_RESEND_VERIFICATION_CODE_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -48,12 +48,12 @@ function VerifyEmail() {
   async function verifyAsync() {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_VERIFY_YOUR_EMAIL_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_VERIFY_YOUR_EMAIL_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
           body: JSON.stringify({
             verificationCode: code
@@ -78,12 +78,12 @@ function VerifyEmail() {
   async function fetchUserInfoAsync() {
     try {
       const userInfoResponse = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

@@ -14,7 +14,7 @@ import {
   InputAdornment,
   InputLabel,
   OutlinedInput,
-  TextField,
+  TextField
 } from "@mui/material";
 import { createBrowserHistory } from "history";
 import { useContext, useEffect, useState } from "react";
@@ -27,10 +27,9 @@ import useNotistack from "../hooks/useNotistack";
 import {
   GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
   POST_FORGOT_PASSWORD_ENDPOINT_PATH,
-  POST_LOGIN_ENDPOINT_PATH,
-  SERVER_URL,
+  POST_LOGIN_ENDPOINT_PATH
 } from "../utils/Endpoints";
-import { saveAuth } from "../utils/Utils";
+import { headers, saveAuth } from "../utils/Utils";
 
 function Login() {
   const history = createBrowserHistory();
@@ -108,12 +107,12 @@ function Login() {
 
     try {
       const loginResponse = await fetch(
-        `${SERVER_URL}${POST_LOGIN_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${POST_LOGIN_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           body: JSON.stringify({
             email: email,
             password: password,
@@ -132,13 +131,13 @@ function Login() {
         // fetch user info
         try {
           const userInfoResponse = await fetch(
-            `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
+            `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
             {
               method: "GET",
-              headers: {
+              headers: headers({
                 "Content-Type": "application/json",
                 Authorization: `bearer ${authData.accessToken}`,
-              },
+              }),
               redirect: "follow",
             }
           );
@@ -193,12 +192,12 @@ function Login() {
   async function forgotPasswordAsync() {
     try {
       const response = await fetch(
-        `${SERVER_URL}${POST_FORGOT_PASSWORD_ENDPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${POST_FORGOT_PASSWORD_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
           body: JSON.stringify({
             email: requestEmail

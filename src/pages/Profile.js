@@ -6,16 +6,9 @@ import PhotoIcon from "@mui/icons-material/Photo";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
   Avatar,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
+  Button, Grid,
   Tab,
-  Tabs,
-  TextField,
+  Tabs
 } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
@@ -24,7 +17,6 @@ import CircularProgressWithText from "../components/CircularProgressWithText";
 import CollectionGallery from "../components/CollectionGallery";
 import DonationDialog from "../components/DonationDialog";
 import ImageGallery from "../components/ImageGallery";
-import { LinkStyles } from "../components/styles/Link.styled";
 import AuthContext from "../contexts/AuthProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
@@ -33,10 +25,9 @@ import {
   GET_USER_COLLECTIONS_ENDPOINT_PATH,
   GET_USER_INFO_BY_ID_ENDPOINT_PATH,
   GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH,
-  GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH,
-  SERVER_URL,
+  GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH
 } from "../utils/Endpoints";
-import { getUserId } from "../utils/Utils";
+import { getUserId, headers } from "../utils/Utils";
 
 function Profile() {
   const { auth, setAuth } = useContext(AuthContext);
@@ -81,15 +72,15 @@ function Profile() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_PHOTOS_THAT_USER_LIKED_ENDPOINT_PATH.replace(
           "{id}",
           `${userId}`
         )}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -110,12 +101,12 @@ function Profile() {
     try {
       if (getUserId() == userId) {
         const userInfoResponse = await fetchWithCredentialsAsync(
-          `${SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
+          `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
           {
             method: "GET",
-            headers: {
+            headers: headers({
               "Content-Type": "application/json",
-            },
+            }),
             redirect: "follow",
           }
         );
@@ -130,15 +121,15 @@ function Profile() {
         }
       } else {
         const userInfoResponse = await fetch(
-          `${SERVER_URL}${GET_USER_INFO_BY_ID_ENDPOINT_PATH.replace(
+          `${process.env.REACT_APP_SERVER_URL}${GET_USER_INFO_BY_ID_ENDPOINT_PATH.replace(
             "{id}",
             `${userId}`
           )}`,
           {
             method: "GET",
-            headers: {
+            headers: headers({
               "Content-Type": "application/json",
-            },
+            }),
             redirect: "follow",
           }
         );
@@ -163,15 +154,15 @@ function Profile() {
     setLoading(true);
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_USER_UPLOADED_PHOTOS_ENDPOINT_PATH.replace(
           "{id}",
           `${userId}`
         )}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -195,15 +186,15 @@ function Profile() {
     } else {
       try {
         const response = await fetch(
-          `${SERVER_URL}${GET_USER_COLLECTIONS_ENDPOINT_PATH.replace(
+          `${process.env.REACT_APP_SERVER_URL}${GET_USER_COLLECTIONS_ENDPOINT_PATH.replace(
             "{id}",
             `${userId}`
           )}`,
           {
             method: "GET",
-            headers: {
+            headers: headers({
               "Content-Type": "application/json",
-            },
+            }),
             redirect: "follow",
           }
         );

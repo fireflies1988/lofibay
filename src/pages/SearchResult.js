@@ -1,3 +1,5 @@
+import CollectionsIcon from "@mui/icons-material/Collections";
+import PhotoIcon from "@mui/icons-material/Photo";
 import { TabContext, TabPanel } from "@mui/lab";
 import {
   Box,
@@ -7,22 +9,20 @@ import {
   MenuItem,
   Select,
   Tab,
-  Tabs,
+  Tabs
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import CollectionsIcon from "@mui/icons-material/Collections";
-import PhotoIcon from "@mui/icons-material/Photo";
 import { useParams } from "react-router-dom";
+import CircularProgressWithText from "../components/CircularProgressWithText";
+import CollectionGallery from "../components/CollectionGallery";
+import ImageGallery from "../components/ImageGallery";
+import useNotistack from "../hooks/useNotistack";
 import {
   GET_ALL_COLORS_ENPOINT_PATH,
   GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH,
-  GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH,
-  SERVER_URL,
+  GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH
 } from "../utils/Endpoints";
-import useNotistack from "../hooks/useNotistack";
-import CircularProgressWithText from "../components/CircularProgressWithText";
-import ImageGallery from "../components/ImageGallery";
-import CollectionGallery from "../components/CollectionGallery";
+import { headers } from "../utils/Utils";
 
 function SearchResult() {
   const [value, setValue] = useState("1");
@@ -57,7 +57,7 @@ function SearchResult() {
     setLoadingPhotos(true);
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_SEARCH_PHOTOS_BY_KEYWORD_ENDPOINT_PATH.replace(
           "{keywords}",
           keywords
         )
@@ -66,9 +66,9 @@ function SearchResult() {
           .replace("{sortBy}", sortBy)}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -89,15 +89,15 @@ function SearchResult() {
     setLoadingCollections(true);
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH.replace(
+        `${process.env.REACT_APP_SERVER_URL}${GET_SEARCH_COLLECTIONS_BY_KEYWORD_ENDPOINT_PATH.replace(
           "{keywords}",
           keywords
         )}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );
@@ -117,12 +117,12 @@ function SearchResult() {
   async function fetchColorOptionsAsync() {
     try {
       const response = await fetch(
-        `${SERVER_URL}${GET_ALL_COLORS_ENPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${GET_ALL_COLORS_ENPOINT_PATH}`,
         {
           method: "GET",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
         }
       );

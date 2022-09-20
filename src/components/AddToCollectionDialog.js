@@ -1,16 +1,11 @@
 import LockIcon from "@mui/icons-material/Lock";
 import {
   Box,
-  Button,
-  Checkbox,
-  Dialog,
+  Button, Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  TextField,
+  DialogTitle, Grid,
+  TextField
 } from "@mui/material";
 import { Stack } from "@mui/system";
 import React, { useContext, useState } from "react";
@@ -18,9 +13,9 @@ import YourCollectionsContext from "../contexts/YourCollectionsProvider";
 import useFetch from "../hooks/useFetch";
 import useNotistack from "../hooks/useNotistack";
 import {
-  POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH,
-  SERVER_URL,
+  POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH
 } from "../utils/Endpoints";
+import { headers } from "../utils/Utils";
 import CheckboxLabel from "./CheckboxLabel";
 import CollectionCard from "./CollectionCard";
 import { RightColumnOfAddToDialog } from "./styles/Collection.styled";
@@ -65,12 +60,12 @@ function AddToCollectionDialog({ open, onClose, photoId, photoUrl }) {
   async function createNewCollectionAsync(photoId) {
     try {
       const response = await fetchWithCredentialsAsync(
-        `${SERVER_URL}${POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH}`,
+        `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH}`,
         {
           method: "POST",
-          headers: {
+          headers: headers({
             "Content-Type": "application/json",
-          },
+          }),
           redirect: "follow",
           body: JSON.stringify({
             ...inputs,
