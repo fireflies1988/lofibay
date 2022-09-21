@@ -25,9 +25,7 @@ function VerifyEmail() {
         `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_RESEND_VERIFICATION_CODE_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -51,9 +49,7 @@ function VerifyEmail() {
         `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_VERIFY_YOUR_EMAIL_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
           body: JSON.stringify({
             verificationCode: code
@@ -81,9 +77,7 @@ function VerifyEmail() {
         `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

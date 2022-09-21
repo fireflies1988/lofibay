@@ -94,9 +94,7 @@ function ChangePassword() {
     try {
       const requestOptions = {
         method: "PATCH",
-        headers: headers({
-          "Content-Type": "application/json",
-        }),
+        headers: headers(),
         body: JSON.stringify({
           currentPassword: inputs.currentPassword,
           newPassword: inputs.newPassword,

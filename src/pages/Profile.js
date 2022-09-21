@@ -78,9 +78,7 @@ function Profile() {
         )}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -104,9 +102,7 @@ function Profile() {
           `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_USER_INFO_ENDPOINT_PATH}`,
           {
             method: "GET",
-            headers: headers({
-              "Content-Type": "application/json",
-            }),
+            headers: headers(),
             redirect: "follow",
           }
         );
@@ -127,9 +123,7 @@ function Profile() {
           )}`,
           {
             method: "GET",
-            headers: headers({
-              "Content-Type": "application/json",
-            }),
+            headers: headers(),
             redirect: "follow",
           }
         );
@@ -160,9 +154,7 @@ function Profile() {
         )}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -192,9 +184,7 @@ function Profile() {
           )}`,
           {
             method: "GET",
-            headers: headers({
-              "Content-Type": "application/json",
-            }),
+            headers: headers(),
             redirect: "follow",
           }
         );

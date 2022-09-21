@@ -118,9 +118,7 @@ function EditProfile() {
     try {
       const requestOptions = {
         method: "GET",
-        headers: headers({
-          "Content-Type": "application/json",
-        }),
+        headers: headers(),
         redirect: "follow",
       };
       const userInfoResponse = await fetchWithCredentialsAsync(
@@ -198,7 +196,6 @@ function EditProfile() {
       const requestOptions = {
         method: "PATCH",
         body: formData,
-        headers: headers({}),
         redirect: "follow",
       };
 

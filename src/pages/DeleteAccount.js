@@ -20,9 +20,7 @@ function DeleteAccount() {
         `${process.env.REACT_APP_SERVER_URL}${DELETE_WITH_AUTH_SOFT_DELETE_ACCOUNT_ENPOINT_PATH}`,
         {
           method: "DELETE",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

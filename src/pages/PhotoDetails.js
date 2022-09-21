@@ -115,9 +115,7 @@ function PhotoDetails() {
         )}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -170,9 +168,7 @@ function PhotoDetails() {
     try {
       const requestOptions = {
         method: "PUT",
-        headers: headers({
-          "Content-Type": "application/json",
-        }),
+        headers: headers(),
         redirect: "follow",
         body: JSON.stringify({
           ...inputs,
@@ -208,9 +204,7 @@ function PhotoDetails() {
     try {
       const requestOptions = {
         method: "DELETE",
-        headers: headers({
-          "Content-Type": "application/json",
-        }),
+        headers: headers(),
         redirect: "follow",
       };
       const response = await fetchWithCredentialsAsync(

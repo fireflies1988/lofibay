@@ -63,9 +63,7 @@ function AddToCollectionDialog({ open, onClose, photoId, photoUrl }) {
         `${process.env.REACT_APP_SERVER_URL}${POST_WITH_AUTH_CREATE_NEW_COLLECTION_ENPOINT_PATH}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
           body: JSON.stringify({
             ...inputs,

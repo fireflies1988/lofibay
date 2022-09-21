@@ -24,9 +24,7 @@ function Home() {
         `${process.env.REACT_APP_SERVER_URL}${GET_ALL_PHOTOS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

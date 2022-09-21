@@ -43,9 +43,7 @@ function CollectionCard({ collection, photoId }) {
         ).replace("{photoId}", `${photoId}`)}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

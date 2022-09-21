@@ -110,9 +110,7 @@ function Login() {
         `${process.env.REACT_APP_SERVER_URL}${POST_LOGIN_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           body: JSON.stringify({
             email: email,
             password: password,
@@ -135,7 +133,6 @@ function Login() {
             {
               method: "GET",
               headers: headers({
-                "Content-Type": "application/json",
                 Authorization: `bearer ${authData.accessToken}`,
               }),
               redirect: "follow",
@@ -195,9 +192,7 @@ function Login() {
         `${process.env.REACT_APP_SERVER_URL}${POST_FORGOT_PASSWORD_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
           body: JSON.stringify({
             email: requestEmail

@@ -59,9 +59,7 @@ function Register() {
     try {
       const signUpResponse = await fetch(`${process.env.REACT_APP_SERVER_URL}${POST_SIGNUP_ENDPOINT_PATH}`, {
         method: "POST",
-        headers: headers({
-          "Content-Type": "application/json"
-        }),
+        headers: headers(),
         body: JSON.stringify({
           email: inputs.email,
           username: inputs.username,

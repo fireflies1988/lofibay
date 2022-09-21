@@ -66,9 +66,7 @@ function SearchResult() {
           .replace("{sortBy}", sortBy)}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -95,9 +93,7 @@ function SearchResult() {
         )}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -120,9 +116,7 @@ function SearchResult() {
         `${process.env.REACT_APP_SERVER_URL}${GET_ALL_COLORS_ENPOINT_PATH}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

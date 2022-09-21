@@ -88,9 +88,7 @@ function Collection() {
         )}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -131,9 +129,7 @@ function Collection() {
         )}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -161,9 +157,7 @@ function Collection() {
         )}`,
         {
           method: "PATCH",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
           body: JSON.stringify({
             ...inputs,
@@ -202,9 +196,7 @@ function Collection() {
         )}`,
         {
           method: "DELETE",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

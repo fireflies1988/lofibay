@@ -28,9 +28,7 @@ function Statistics() {
         `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_STATS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

@@ -53,9 +53,7 @@ function Navbar() {
         `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_NOTIFICATIONS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -77,9 +75,7 @@ function Navbar() {
         `${process.env.REACT_APP_SERVER_URL}${PATCH_WITH_AUTH_MARK_NOTIFICATIONS_AS_READ_ENDPOINT_PATH}`,
         {
           method: "PATCH",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

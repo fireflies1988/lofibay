@@ -64,7 +64,6 @@ function Upload() {
         const requestOptions = {
           method: "POST",
           body: formData,
-          headers: headers({}),
           redirect: "follow",
         };
 

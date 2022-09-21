@@ -47,9 +47,7 @@ function Tags() {
         ).replace("{bad}", bad)}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -75,9 +73,7 @@ function Tags() {
         )}`,
         {
           method: "DELETE",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );

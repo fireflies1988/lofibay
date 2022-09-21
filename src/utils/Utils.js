@@ -64,8 +64,7 @@ export function isThisPhotoAlreadyInOneOfYourCollection(photoId, yourCollections
 }
 
 export function headers(current) {
-  if (process.env.REACT_APP_ENVIRONMENT === "staging") {
-    current["X-Api-Key"] = process.env.REACT_APP_API_KEY;
-  }
+  current = current ?? {};
+  current["Content-Type"] = "application/json";
   return current;
 }

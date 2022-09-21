@@ -27,9 +27,6 @@ function useFetch() {
   async function fetchWithCredentialsAsync(url, requestOptions) {
     requestOptions.headers = requestOptions.headers || {};
     requestOptions.headers.Authorization = `bearer ${getAccessToken()}`;
-    if (process.env.REACT_APP_ENVIRONMENT === "staging") {
-      requestOptions.headers["X-Api-Key"] = process.env.REACT_APP_API_KEY;
-    }
     const response = await fetch(url, requestOptions);
 
     if (response?.status === 401 && response.headers.has("Token-Expired")) {
@@ -38,9 +35,7 @@ function useFetch() {
         `${process.env.REACT_APP_SERVER_URL}${POST_REFRESH_TOKEN_ENDPOINT_PATH}`,
         {
           method: "POST",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           body: JSON.stringify({
             userId: getUserId(),
             refreshToken: getRefreshToken(),
@@ -89,9 +84,7 @@ function useFetch() {
         )}`,
         {
           method: "PATCH",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -116,9 +109,7 @@ function useFetch() {
     try {
       const requestOptions = {
         method: "POST",
-        headers: headers({
-          "Content-Type": "application/json",
-        }),
+        headers: headers(),
         redirect: "follow",
       };
       const response = await fetchWithCredentialsAsync(
@@ -147,9 +138,7 @@ function useFetch() {
         `${process.env.REACT_APP_SERVER_URL}${GET_WITH_AUTH_YOUR_COLLECTIONS_ENDPOINT_PATH}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -176,9 +165,7 @@ function useFetch() {
           .replace("{desc}", desc)}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -205,9 +192,7 @@ function useFetch() {
         ).replace("{desc}", desc)}`,
         {
           method: "GET",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
@@ -234,9 +219,7 @@ function useFetch() {
         ).replace("{photoStateId}", photoStateId)}`,
         {
           method: "PATCH",
-          headers: headers({
-            "Content-Type": "application/json",
-          }),
+          headers: headers(),
           redirect: "follow",
         }
       );
